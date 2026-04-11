@@ -6,6 +6,15 @@ const btnNext = document.getElementById('btn-next');
 const btnRestart = document.getElementById('btn-restart');
 const music = document.getElementById('tron-music');
 
+// --- SISTEMA DE AUDIO ---
+const soundIntro = new Audio('assets/intro.mp3');
+const soundMotor = new Audio('assets/motor.mp3');
+const soundGiro = new Audio('assets/giro.mp3');
+
+soundIntro.loop = true;
+soundMotor.loop = true;
+soundMotor.volume = 0.4; // Volumen del motor un poco más bajo para no saturar
+
 // --- 1. CONFIGURACIÓN DE MECÁNICA ---
 canvas.width = 800;
 canvas.height = 500;
@@ -40,7 +49,11 @@ const messages = [
 instrText.innerHTML = messages[0];
 
 btnNext.addEventListener('click', () => {
-    music.play().catch(() => {});
+    // INICIAR INTRO AL DAR CLIC EN SIGUIENTE
+    if (soundIntro.paused) {
+        soundIntro.play().catch(() => {});
+    }
+
     step++;
     if (step < messages.length) {
         instrText.innerHTML = messages[step];
@@ -192,7 +205,6 @@ function gameLoop() {
     playerBike.draw();
     iaBike.draw();
     
-    // La velocidad ahora depende de la variable gameSpeed
     setTimeout(() => requestAnimationFrame(gameLoop), gameSpeed); 
 }
 
@@ -200,7 +212,11 @@ function endGame(winner) {
     gameRunning = false;
     clearInterval(intervaloTiempo);
 
-    // Guardar record
+    // CONTROL DE AUDIO: Apagar motor y volver a la intro
+    soundMotor.pause();
+    soundMotor.currentTime = 0;
+    soundIntro.play().catch(() => {});
+
     if (tiempoSobrevivido > puntajeMaximo) {
         puntajeMaximo = tiempoSobrevivido;
         localStorage.setItem('tronMaxScore', puntajeMaximo);
@@ -218,15 +234,18 @@ function endGame(winner) {
 }
 
 function resetGame() {
-    // Si el jugador ganó, subimos de nivel (máximo 3)
+    // CONTROL DE AUDIO: Detener intro y arrancar motor
+    soundIntro.pause();
+    soundIntro.currentTime = 0;
+    soundMotor.play().catch(() => {});
+
     if (!playerBike.alive) {
         nivel = 1;
         gameSpeed = 80;
     } else if (gameRunning === false && iaBike.alive === false) {
         if (nivel < 3) nivel++;
-        // Ajuste de dificultad (Velocidad)
-        if (nivel === 2) gameSpeed = 50; // Un poco más rápido
-        if (nivel === 3) gameSpeed = 30; // Rápido (reflejos veloces)
+        if (nivel === 2) gameSpeed = 50; 
+        if (nivel === 3) gameSpeed = 30; 
     }
 
     gridData = Array.from({length: WIDTH_UNITS}, () => Array(HEIGHT_UNITS).fill(null));
@@ -248,7 +267,15 @@ function resetGame() {
 document.addEventListener('keydown', (e) => {
     if(["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) e.preventDefault();
     if (e.code === "Space" && (step >= 3 || !gameRunning)) resetGame();
+    
     if (!gameRunning) return;
+
+    // SONIDO DE GIRO AL TOCAR FLECHAS
+    if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        soundGiro.currentTime = 0;
+        soundGiro.play().catch(() => {});
+    }
+
     if (e.key === "ArrowUp" && playerBike.direction !== 2) playerBike.direction = 0;
     if (e.key === "ArrowRight" && playerBike.direction !== 3) playerBike.direction = 1;
     if (e.key === "ArrowDown" && playerBike.direction !== 0) playerBike.direction = 2;
