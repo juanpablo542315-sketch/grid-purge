@@ -23,6 +23,13 @@ let gameRunning = false;
 let step = 0;
 let gridData = [];
 
+// --- 3. NUEVAS VARIABLES DE PROGRESO ---
+let nivel = 1;
+let tiempoSobrevivido = 0;
+let puntajeMaximo = localStorage.getItem('tronMaxScore') || 0;
+let intervaloTiempo;
+let gameSpeed = 80; // Velocidad inicial (Nivel 1)
+
 const messages = [
     "<p class='text-white'>SISTEMA: Conexión establecida... <br><br>Bienvenido, Usuario. Estás dentro de la red de combate.</p>",
     "<p class='text-cyan'>OBJETIVO: <br><br>Crea muros de luz para encerrar a GLU. No toques ninguna estela o serás desintegrado.</p>",
@@ -55,21 +62,18 @@ class Bike {
         this.x = x; this.y = y; this.direction = direction;
         this.trail = []; this.alive = true;
     }
-   update() {
+    update() {
         if (!this.alive) return;
         this.trail.push({x: this.x, y: this.y});
-        // Registrar rastro actual antes de avanzar
         if (this.x >= 0 && this.x < WIDTH_UNITS && this.y >= 0 && this.y < HEIGHT_UNITS) {
             gridData[this.x][this.y] = this.color;
         }
-        // Calcular nueva posición
         if (this.direction === 0) this.y--; 
         if (this.direction === 1) this.x++;
         if (this.direction === 2) this.y++; 
         if (this.direction === 3) this.x--;
     }
 
-    // Nueva función interna para checar si la posición actual es mortal
     checkDeath() {
         if (this.x < 0 || this.x >= WIDTH_UNITS || this.y < 0 || this.y >= HEIGHT_UNITS || gridData[this.x][this.y]) {
             return true;
@@ -102,15 +106,10 @@ class Bike {
     }
 }
 
-// --- IA DE PERSECUCIÓN (Agresiva) ---
 function updateAdvancedIA() {
     if (!iaBike.alive) return;
-
     let possibleDirs = [0, 1, 2, 3];
-    // No puede girar 180 grados
     possibleDirs = possibleDirs.filter(d => d !== (iaBike.direction + 2) % 4);
-
-    // Filtrar direcciones que no la maten inmediatamente
     let safeDirs = possibleDirs.filter(d => {
         let nx = iaBike.x, ny = iaBike.y;
         if (d === 0) ny--; if (d === 1) nx++; if (d === 2) ny++; if (d === 3) nx--;
@@ -118,24 +117,17 @@ function updateAdvancedIA() {
     });
 
     if (safeDirs.length > 0) {
-        // Buscar la dirección que reduzca la distancia hacia el jugador
         let bestDir = safeDirs[0];
         let minDist = Infinity;
-
         safeDirs.forEach(d => {
             let nx = iaBike.x, ny = iaBike.y;
             if (d === 0) ny--; if (d === 1) nx++; if (d === 2) ny++; if (d === 3) nx--;
-            
-            // Distancia Manhattan (X + Y) hacia el jugador
             let dist = Math.abs(nx - playerBike.x) + Math.abs(ny - playerBike.y);
-            
             if (dist < minDist) {
                 minDist = dist;
                 bestDir = d;
             }
         });
-        
-        // 95% de probabilidad de elegir el camino que te persigue
         if (Math.random() > 0.05) iaBike.direction = bestDir;
     }
 }
@@ -168,6 +160,13 @@ function drawPerspectiveBackground() {
     }
     ctx.stroke();
     ctx.globalAlpha = 1;
+
+    // --- DIBUJAR UI DE TIEMPO Y NIVEL ---
+    ctx.fillStyle = "#fff";
+    ctx.font = "14px 'Courier New'";
+    ctx.fillText(`NIVEL: ${nivel}`, 20, 30);
+    ctx.fillText(`TIEMPO: ${tiempoSobrevivido}s`, 20, 50);
+    ctx.fillText(`RECORD: ${puntajeMaximo}s`, 20, 70);
 }
 
 function gameLoop() {
@@ -175,51 +174,74 @@ function gameLoop() {
     if (gameRunning) {
         gridOffset = (gridOffset + 0.05) % 1;
         updateAdvancedIA();
-        
-        
         playerBike.update();
         iaBike.update();
 
-        
         if (playerBike.x === iaBike.x && playerBike.y === iaBike.y) {
             playerBike.alive = false;
             iaBike.alive = false;
             endGame("IA"); 
         } else {
-            // Verificar colisiones individuales normales
             let pDead = playerBike.checkDeath();
             let iDead = iaBike.checkDeath();
-
-            if (pDead && iDead) endGame("IA"); // Ambos chocaron con algo a la vez
+            if (pDead && iDead) endGame("IA");
             else if (pDead) playerBike.kill();
             else if (iDead) iaBike.kill();
         }
     }
     playerBike.draw();
     iaBike.draw();
-    setTimeout(() => requestAnimationFrame(gameLoop), 70); 
+    
+    // La velocidad ahora depende de la variable gameSpeed
+    setTimeout(() => requestAnimationFrame(gameLoop), gameSpeed); 
 }
 
 function endGame(winner) {
     gameRunning = false;
+    clearInterval(intervaloTiempo);
+
+    // Guardar record
+    if (tiempoSobrevivido > puntajeMaximo) {
+        puntajeMaximo = tiempoSobrevivido;
+        localStorage.setItem('tronMaxScore', puntajeMaximo);
+    }
+
     if (winner === "IA") {
         statusEl.innerText = "HAS SIDO VENCIDO POR GLU";
         statusEl.className = "text-danger fw-bold";
-        instrText.innerHTML = "<p class='text-danger'>FIN DE LA TRANSMISIÓN. <br><br>Tu ciclo de luz ha sido interceptado. <br>Presiona ESPACIO para reiniciar.</p>";
+        instrText.innerHTML = `<p class='text-danger'>FIN DE LA TRANSMISIÓN. <br><br>Sobreviviste ${tiempoSobrevivido} segundos. <br>Presiona ESPACIO para reiniciar.</p>`;
     } else {
         statusEl.innerText = "GLU PURGADO";
         statusEl.className = "text-success fw-bold";
-        instrText.innerHTML = "<p class='text-success'>¡VICTORIA! <br><br>Has eliminado la amenaza del sistema. <br>Presiona ESPACIO para otra ronda.</p>";
+        instrText.innerHTML = `<p class='text-success'>¡VICTORIA! <br><br>Nivel ${nivel} superado. <br>Presiona ESPACIO para continuar.</p>`;
     }
 }
 
 function resetGame() {
+    // Si el jugador ganó, subimos de nivel (máximo 3)
+    if (!playerBike.alive) {
+        nivel = 1;
+        gameSpeed = 80;
+    } else if (gameRunning === false && iaBike.alive === false) {
+        if (nivel < 3) nivel++;
+        // Ajuste de dificultad (Velocidad)
+        if (nivel === 2) gameSpeed = 50; // Un poco más rápido
+        if (nivel === 3) gameSpeed = 30; // Rápido (reflejos veloces)
+    }
+
     gridData = Array.from({length: WIDTH_UNITS}, () => Array(HEIGHT_UNITS).fill(null));
     playerBike.reset(WIDTH_UNITS * 0.2, 25, 1);
     iaBike.reset(WIDTH_UNITS * 0.8, 25, 3);
-    statusEl.innerText = "ACTIVE"; 
+    
+    tiempoSobrevivido = 0;
+    clearInterval(intervaloTiempo);
+    intervaloTiempo = setInterval(() => {
+        if (gameRunning) tiempoSobrevivido++;
+    }, 1000);
+
+    statusEl.innerText = `ACTIVE - NIVEL ${nivel}`; 
     statusEl.className = "text-success fw-bold";
-    instrText.innerHTML = "<p class='text-cyan'>COMBATE EN CURSO... <br><br>GLU está rastreando tu posición.</p>";
+    instrText.innerHTML = `<p class='text-cyan'>NIVEL ${nivel} EN CURSO... <br><br>La velocidad del Grid ha aumentado.</p>`;
     gameRunning = true;
 }
 
