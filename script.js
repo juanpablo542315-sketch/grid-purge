@@ -55,7 +55,7 @@ function updateUI() {
 
 const messages = [
     "<p class='text-white'>SISTEMA: Conexión establecida... <br><br>Bienvenido, Usuario. Estás dentro de la red de combate.</p>",
-    "<p class='text-cyan'>OBJETIVO: <br><br>Crea muros de luz para encerrar a GLU con tu motocileta, el tratara de hacer lo mismo contigo. Por lo tanto NO toques ninguna estela o serás desintegrado.</p>",
+    "<p class='text-cyan'>OBJETIVO: <br><br>Crea muros de luz para encerrar a GLU con tu motocileta stelar, el tratara de hacer lo mismo contigo. Por lo tanto NO toques ninguna estela o serás desintegrado.</p>",
     "<p class='text-warning'>CONTROLES: <br><br>Usa las FLECHAS de tu teclado para girar a cualquier dirección. El ESPACIO reinicia el combate.</p>",
     "<p class='text-success fw-bold'>¡LISTO! <br><br>Presiona el botón para entrar a la Red y comenzar la batalla.</p>"
 ];
