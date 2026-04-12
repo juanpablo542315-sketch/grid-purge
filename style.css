@@ -75,3 +75,25 @@ body {
     text-shadow: 0 0 10px #00f2ff; /* Efecto neón para que no se pierda */
     font-weight: bold;
 }
+/* =========================================================
+   SISTEMA TRON: EL GRAN RETO - CURSOR PERSONALIZADO (SVG)
+   Este código no altera la funcionalidad ni el texto del juego.
+   ========================================================= */
+
+/* Se aplica a todo el cuerpo del documento */
+body {
+  /* Usamos un SVG codificado directamente en el CSS para evitar archivos extra */
+  /* El diseño es un triángulo minimalista cian con brillo neón */
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cdefs%3E%3Cfilter id='neon' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3Cfeflood flood-color='%2300f2ff' flood-opacity='0.5' result='flood'/%3E%3Cfekomposite in='flood' in2='SourceGraphic' operator='in' result='mask'/%3E%3Cfemorphology in='mask' radius='1.5' operator='dilate' result='dilated'/%3E%3Cfegaussianblur in='dilated' stdDeviation='2' result='blurred'/%3E%3Cfemerge%3E%3Cfemergenode in='blurred'/%3E%3Cfemergenode in='SourceGraphic'/%3E%3C/femerge%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M2 2l11 11-4 1 5 5-2 2-5-5-1 4z' fill='%23ffffff' stroke='%2300f2ff' stroke-width='1.5' filter='url(%23neon)'/%3E%3C/svg%3E") 2 2, auto;
+}
+
+/* Asegura que los botones y elementos clickeables usen el cursor de "mano" estándar */
+/* Esto mantiene la claridad de operación para el Usuario */
+button, .btn, #btn-next, #btn-restart {
+  cursor: pointer;
+}
+
+/* Cursor específico para el Canvas (opcional, si quieres el mismo o uno diferente) */
+#gameCanvas {
+    cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cdefs%3E%3Cfilter id='neon' x='-50%25' y='-50%25' width='200%25' height='200%25'%3E%3Cfeflood flood-color='%2300f2ff' flood-opacity='0.5' result='flood'/%3E%3Cfekomposite in='flood' in2='SourceGraphic' operator='in' result='mask'/%3E%3Cfemorphology in='mask' radius='1.5' operator='dilate' result='dilated'/%3E%3Cfegaussianblur in='dilated' stdDeviation='2' result='blurred'/%3E%3Cfemerge%3E%3Cfemergenode in='blurred'/%3E%3Cfemergenode in='SourceGraphic'/%3E%3C/femerge%3E%3C/filter%3E%3C/defs%3E%3Cpath d='M2 2l11 11-4 1 5 5-2 2-5-5-1 4z' fill='%23ffffff' stroke='%2300f2ff' stroke-width='1.5' filter='url(%23neon)'/%3E%3C/svg%3E") 2 2, crosshair;
+}
