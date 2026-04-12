@@ -55,9 +55,9 @@ function updateUI() {
 
 const messages = [
     "<p class='text-white'>SISTEMA: Conexión establecida... <br><br>Bienvenido, Usuario. Estás dentro de la red de combate.</p>",
-    "<p class='text-cyan'>OBJETIVO: <br><br>Crea muros de luz para encerrar a GLU. No toques ninguna estela o serás desintegrado.</p>",
-    "<p class='text-warning'>CONTROLES: <br><br>Usa las FLECHAS para girar. El espacio reinicia el combate.</p>",
-    "<p class='text-success fw-bold'>¡LISTO! <br><br>Presiona el botón para entrar al Grid y comenzar.</p>"
+    "<p class='text-cyan'>OBJETIVO: <br><br>Crea muros de luz para encerrar a GLU con tu motocileta, el tratara de hacer lo mismo contigo. Por lo tanto NO toques ninguna estela o serás desintegrado.</p>",
+    "<p class='text-warning'>CONTROLES: <br><br>Usa las FLECHAS de tu teclado para girar a cualquier dirección. El espacio reinicia el combate.</p>",
+    "<p class='text-success fw-bold'>¡LISTO! <br><br>Presiona el botón para entrar a la Red y comenzar la batalla.</p>"
 ];
 
 let typingInterval; 
@@ -292,11 +292,11 @@ function endGame(winner) {
     if (winner === "IA") {
         statusEl.innerText = "HAS SIDO VENCIDO POR GLU";
         statusEl.className = "text-danger fw-bold";
-        typeWriter(instrText, `<p class='text-danger'>FIN DE LA TRANSMISIÓN. <br><br>Sobreviviste ${tiempoSobrevivido} segundos. <br>Presiona ESPACIO para reiniciar.</p>`);
+        typeWriter(instrText, `<p class='text-danger'>FIN DE LA TRANSMISIÓN. <br><br>Sobreviviste ${tiempoSobrevivido} segundos. <br>Presiona  el boton de abajo o ESPACIO para reiniciar.</p>`);
     } else {
-        statusEl.innerText = "GLU PURGADO";
+        statusEl.innerText = "GLU ELIMINADO";
         statusEl.className = "text-success fw-bold";
-        typeWriter(instrText, `<p class='text-success'>¡VICTORIA! <br><br>Nivel ${nivel} superado. <br>Presiona ESPACIO para continuar.</p>`);
+        typeWriter(instrText, `<p class='text-success'>¡VICTORIA! <br><br>Nivel ${nivel} superado. <br>Presiona ESPACIO para continuar y AVANZAR.</p>`);
     }
 }
 
@@ -323,7 +323,7 @@ function resetGame() {
     }, 1000);
     statusEl.innerText = `ACTIVE - NIVEL ${nivel}`; 
     statusEl.className = "text-success fw-bold";
-    typeWriter(instrText, `<p class='text-cyan'>NIVEL ${nivel} EN CURSO... <br><br>La velocidad del Grid ha aumentado.</p>`);
+    typeWriter(instrText, `<p class='text-cyan'>NIVEL ${nivel} EN CURSO... <br><br>La velocidad de la Red ha aumentado.</p>`);
     gameRunning = true;
 }
 
