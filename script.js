@@ -122,6 +122,7 @@ class Bike {
     }
 
     draw() {
+        // --- 1. DIBUJAR ESTELA (SE MANTIENE IGUAL, FASCINANTE) ---
         ctx.beginPath();
         ctx.strokeStyle = this.color;
         ctx.lineWidth = 3;
@@ -136,62 +137,90 @@ class Bike {
         ctx.lineTo(this.x * GRID_SIZE + 5, this.y * GRID_SIZE + 5);
         ctx.stroke();
         
+        // --- 2. DIBUJAR NUEVA FORMA DE MOTO (SEGÚN IMAGEN DE REFERENCIA) ---
         const cx = this.x * GRID_SIZE + 5; 
         const cy = this.y * GRID_SIZE + 5; 
-        const halfSize = 6; 
+        const unit = GRID_SIZE / 10; // Unidad de medida basada en el grid
 
         ctx.save(); 
         ctx.translate(cx, cy); 
 
-        if (this.direction === 0) ctx.rotate(-Math.PI / 2); 
-        if (this.direction === 1) ctx.rotate(0);             
-        if (this.direction === 2) ctx.rotate(Math.PI / 2);  
-        if (this.direction === 3) ctx.rotate(Math.PI);      
+        // Rotar la moto según la dirección
+        if (this.direction === 0) ctx.rotate(-Math.PI / 2); // Norte
+        if (this.direction === 1) ctx.rotate(0);             // Este
+        if (this.direction === 2) ctx.rotate(Math.PI / 2);  // Sur
+        if (this.direction === 3) ctx.rotate(Math.PI);      // Oeste
 
-        const obscurecerColor = (hex, factor) => {
-            hex = hex.replace('#', '');
-            let r = parseInt(hex.substring(0, 2), 16);
-            let g = parseInt(hex.substring(2, 4), 16);
-            let b = parseInt(hex.substring(4, 6), 16);
-            r = Math.floor(r * factor);
-            g = Math.floor(g * factor);
-            b = Math.floor(b * factor);
-            const toHex = (c) => c.toString(16).padStart(2, '0');
-            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
-        };
-
-        const brightNeonColor = this.color; 
-        const darkNeonColor = obscurecerColor(this.color, 0.6); 
-        const coreColor = "#ffffff"; 
-
+        // Configuración de estilo neón para el cuerpo
         ctx.shadowBlur = 10;
-        ctx.shadowColor = brightNeonColor;
-        ctx.fillStyle = darkNeonColor; 
-        ctx.globalAlpha = 0.5; 
+        ctx.shadowColor = this.color;
+        ctx.strokeStyle = this.color;
+        ctx.fillStyle = "#ffffff"; // Color del núcleo (blanco para que el neón resalte)
+        ctx.lineWidth = 1.5;
+        ctx.globalAlpha = 1.0;
 
+        // A. Dibujar el Cuerpo Principal (La forma de cuña de la imagen)
         ctx.beginPath();
-        ctx.moveTo(-halfSize + 1.5, -halfSize + 3); 
-        ctx.lineTo(halfSize, -1.5);                  
-        ctx.lineTo(halfSize, 1.5);                   
-        ctx.lineTo(-halfSize + 1.5, halfSize - 3);  
+        // Empezar en la punta delantera
+        ctx.moveTo(8 * unit, 0);
+        // Lado superior hacia atrás y hacia afuera
+        ctx.lineTo(-2 * unit, -4 * unit);
+        // Pequeño escalón hacia adentro
+        ctx.lineTo(-1 * unit, -2 * unit);
+        // Pequeña extensión trasera
+        ctx.lineTo(-4 * unit, -2 * unit);
+        // Parte trasera central
+        ctx.lineTo(-4 * unit, 2 * unit);
+        // Simetría para el lado inferior
+        ctx.lineTo(-1 * unit, 2 * unit);
+        ctx.lineTo(-2 * unit, 4 * unit);
+        // Cerrar en la punta delantera
         ctx.closePath();
+        ctx.stroke();
+        
+        // Rellenar el núcleo para darle solidez
+        ctx.globalAlpha = 0.2;
+        ctx.fill();
+        ctx.globalAlpha = 1.0;
+
+        // B. Dibujar la Cabina/Piloto (El elemento morado de la imagen)
+        // Usamos un color morado neón fijo para la cabina, como en la referencia.
+        ctx.shadowColor = "#cc00ff"; 
+        ctx.fillStyle = "#ffffff";
+        ctx.strokeStyle = "#cc00ff";
+        
+        ctx.beginPath();
+        // Forma aerodinámica central
+        ctx.moveTo(1 * unit, -1.5 * unit); // Delantera superior cabina
+        ctx.lineTo(4 * unit, 0);            // Punta delantera cabina
+        ctx.lineTo(1 * unit, 1.5 * unit);  // Delantera inferior cabina
+        ctx.lineTo(-2 * unit, 1 * unit);   // Trasera inferior cabina
+        ctx.lineTo(-2 * unit, -1 * unit);  // Trasera superior cabina
+        ctx.closePath();
+        ctx.stroke();
+        
+        // Relleno de la cabina
+        ctx.globalAlpha = 0.3;
         ctx.fill();
 
+        // C. Detalles adicionales (Aletas traseras pequeñas)
         ctx.shadowBlur = 5;
-        ctx.shadowColor = coreColor;
-        ctx.fillStyle = coreColor;
-        ctx.globalAlpha = 1.0; 
+        ctx.shadowColor = this.color;
+        ctx.strokeStyle = this.color;
+        ctx.fillStyle = this.color;
+        
+        // Aleta Superior
         ctx.beginPath();
-        ctx.moveTo(-halfSize + 3, 0);   
-        ctx.lineTo(halfSize - 1.5, -0.7); 
-        ctx.lineTo(halfSize - 1.5, 0.7);  
-        ctx.closePath();
+        ctx.moveTo(-1.5 * unit, -3 * unit);
+        ctx.lineTo(-3 * unit, -3 * unit);
+        ctx.lineTo(-3 * unit, -2 * unit);
         ctx.fill();
 
-        ctx.fillStyle = darkNeonColor;
-        ctx.globalAlpha = 0.8;
+        // Aleta Inferior
         ctx.beginPath();
-        ctx.arc(-halfSize + 1.5, 0, 2, 0, Math.PI * 2); 
+        ctx.moveTo(-1.5 * unit, 3 * unit);
+        ctx.lineTo(-3 * unit, 3 * unit);
+        ctx.lineTo(-3 * unit, 2 * unit);
         ctx.fill();
 
         ctx.restore(); 
