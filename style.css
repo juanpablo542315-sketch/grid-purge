@@ -6,7 +6,7 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* O la fuente que estés usando */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
     color: #fff;  
     background: #101010 url('assets/background-tron.jpg') no-repeat center center fixed;
     background-size: cover;
@@ -19,23 +19,29 @@ body {
     text-shadow: 0 0 10px var(--neon-blue);
 }
 
-
 .border-primary { border-color: var(--neon-blue) !important; }
 
 .shadow-neon {
     box-shadow: 0 0 20px rgba(0, 242, 255, 0.25);
 }
 
-.btn-outline-cyan {
+/* --- AJUSTE DE BOTONES NEÓN --- */
+
+/* Aplicamos el estilo de "Siguiente" también al botón de "Reiniciar" */
+.btn-outline-cyan, #btn-restart {
     color: var(--neon-blue);
-    border-color: var(--neon-blue);
+    border: 1px solid var(--neon-blue);
+    background-color: transparent;
     transition: 0.3s;
+    text-transform: uppercase; /* Para mantener la estética Tron */
 }
 
-.btn-outline-cyan:hover {
-    background-color: var(--neon-blue);
-    color: #000;
-    box-shadow: 0 0 15px var(--neon-blue);
+/* Efecto Hover para AMBOS botones */
+.btn-outline-cyan:hover, #btn-restart:hover {
+    background-color: var(--neon-blue) !important;
+    color: #000 !important;
+    box-shadow: 0 0 20px var(--neon-blue);
+    cursor: pointer;
 }
 
 /* Contenedor del Video y Canvas */
@@ -61,9 +67,6 @@ body {
 #gameCanvas {
     position: relative;
     z-index: 2;
-    background: transparent; /* Importante: que sea transparente */
+    background: transparent; 
     display: block;
-    /* BORRA O COMENTA ESTO: */
-    /* background-image: url('assets/background.jpg'); */
-    /* background-size: cover; */
 }
