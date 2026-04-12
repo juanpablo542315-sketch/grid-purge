@@ -6,7 +6,7 @@ const btnNext = document.getElementById('btn-next');
 const btnRestart = document.getElementById('btn-restart');
 const music = document.getElementById('tron-music');
 
-// --- SISTEMA DE AUDIO (Ajuste de precisión) ---
+// --- SISTEMA DE AUDIO ---
 const soundIntro = new Audio('assets/intro.mp3');
 const soundMotor = new Audio('assets/motor.wav');
 const soundGiro = new Audio('assets/giro.mp3');
@@ -40,7 +40,7 @@ let gameRunning = false;
 let step = 0;
 let gridData = [];
 
-// --- 3. NUEVAS VARIABLES DE PROGRESO ---
+// --- 3. VARIABLES DE PROGRESO ---
 let nivel = 1;
 let tiempoSobrevivido = 0;
 let puntajeMaximo = localStorage.getItem('tronMaxScore') || 0;
@@ -54,7 +54,29 @@ const messages = [
     "<p class='text-success fw-bold'>¡LISTO! <br><br>Presiona el botón para entrar al Grid y comenzar.</p>"
 ];
 
-instrText.innerHTML = messages[0];
+// --- NUEVA LÓGICA TYPEWRITER (ESTILO ZELDA) ---
+let typingInterval; 
+function typeWriter(element, htmlText, speed = 30) {
+    clearInterval(typingInterval);
+    element.innerHTML = "";
+    let i = 0;
+    typingInterval = setInterval(() => {
+        if (i < htmlText.length) {
+            if (htmlText[i] === "<") {
+                let tagEnd = htmlText.indexOf(">", i);
+                i = tagEnd + 1;
+            } else {
+                i++;
+            }
+            element.innerHTML = htmlText.substring(0, i);
+        } else {
+            clearInterval(typingInterval);
+        }
+    }, speed);
+}
+
+// Iniciar con el primer mensaje animado
+typeWriter(instrText, messages[0]);
 
 btnNext.addEventListener('click', () => {
     if (soundIntro.paused) {
@@ -62,7 +84,7 @@ btnNext.addEventListener('click', () => {
     }
     step++;
     if (step < messages.length) {
-        instrText.innerHTML = messages[step];
+        typeWriter(instrText, messages[step]); // Llamada al efecto Zelda
     } else {
         btnNext.classList.add('d-none');
         btnRestart.classList.remove('d-none');
@@ -99,9 +121,7 @@ class Bike {
         return false;
     }
 
-    // --- MÉTODO DRAW ACTUALIZADO (Motos más grandes y oscuras) ---
     draw() {
-        // 1. Dibujar la estela (trail) - SE MANTIENE IGUAL DE BRILLANTE
         ctx.beginPath();
         ctx.strokeStyle = this.color;
         ctx.lineWidth = 3;
@@ -116,52 +136,39 @@ class Bike {
         ctx.lineTo(this.x * GRID_SIZE + 5, this.y * GRID_SIZE + 5);
         ctx.stroke();
         
-        // 2. DIBUJAR LA MINIMOTO ANIMADA
         const cx = this.x * GRID_SIZE + 5; 
         const cy = this.y * GRID_SIZE + 5; 
-        
-        // --- CAMBIO 1: Moto un 50% más grande (de 4 a 6) ---
         const halfSize = 6; 
 
         ctx.save(); 
         ctx.translate(cx, cy); 
 
-        if (this.direction === 0) ctx.rotate(-Math.PI / 2); // Arriba
-        if (this.direction === 1) ctx.rotate(0);             // Derecha
-        if (this.direction === 2) ctx.rotate(Math.PI / 2);  // Abajo
-        if (this.direction === 3) ctx.rotate(Math.PI);      // Izquierda
+        if (this.direction === 0) ctx.rotate(-Math.PI / 2); 
+        if (this.direction === 1) ctx.rotate(0);             
+        if (this.direction === 2) ctx.rotate(Math.PI / 2);  
+        if (this.direction === 3) ctx.rotate(Math.PI);      
 
-        // --- DISEÑO DE LA MOTO NEÓN OSCURECIDA ---
-        
-        // --- CAMBIO 2: Tonalidad más oscura para el cuerpo ---
-        // Función rápida para oscurecer un color hexadecimal
         const obscurecerColor = (hex, factor) => {
-            // Quitar el # si existe
             hex = hex.replace('#', '');
-            // Convertir a RGB
             let r = parseInt(hex.substring(0, 2), 16);
             let g = parseInt(hex.substring(2, 4), 16);
             let b = parseInt(hex.substring(4, 6), 16);
-            // Multiplicar por el factor (0.0 a 1.0)
             r = Math.floor(r * factor);
             g = Math.floor(g * factor);
             b = Math.floor(b * factor);
-            // Convertir de vuelta a hex padding con 0 si es necesario
             const toHex = (c) => c.toString(16).padStart(2, '0');
             return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
         };
 
-        const brightNeonColor = this.color; // Color original para el brillo
-        const darkNeonColor = obscurecerColor(this.color, 0.6); // Cuerpo 40% más oscuro
-        const coreColor = "#ffffff"; // Núcleo brillante (se mantiene)
+        const brightNeonColor = this.color; 
+        const darkNeonColor = obscurecerColor(this.color, 0.6); 
+        const coreColor = "#ffffff"; 
 
-        // A) Sombra Neón (El Brillo Base) - Mantenemos el color original para un brillo sutil
         ctx.shadowBlur = 10;
         ctx.shadowColor = brightNeonColor;
-        ctx.fillStyle = darkNeonColor; // Pero rellenamos con el color oscuro
-        ctx.globalAlpha = 0.5; // Un poco más transparente para oscurecer el conjunto
+        ctx.fillStyle = darkNeonColor; 
+        ctx.globalAlpha = 0.5; 
 
-        // B) Cuerpo Principal - Ahora usa el color oscuro
         ctx.beginPath();
         ctx.moveTo(-halfSize + 1.5, -halfSize + 3); 
         ctx.lineTo(halfSize, -1.5);                  
@@ -170,7 +177,6 @@ class Bike {
         ctx.closePath();
         ctx.fill();
 
-        // C) El Núcleo Brillante (Se mantiene blanco para diferenciar)
         ctx.shadowBlur = 5;
         ctx.shadowColor = coreColor;
         ctx.fillStyle = coreColor;
@@ -182,8 +188,6 @@ class Bike {
         ctx.closePath();
         ctx.fill();
 
-        // D) El Motor - Ahora usa el color oscuro
-        // --- CAMBIO 3: Motor proporcionalmente más grande ---
         ctx.fillStyle = darkNeonColor;
         ctx.globalAlpha = 0.8;
         ctx.beginPath();
@@ -298,11 +302,11 @@ function endGame(winner) {
     if (winner === "IA") {
         statusEl.innerText = "HAS SIDO VENCIDO POR GLU";
         statusEl.className = "text-danger fw-bold";
-        instrText.innerHTML = `<p class='text-danger'>FIN DE LA TRANSMISIÓN. <br><br>Sobreviviste ${tiempoSobrevivido} segundos. <br>Presiona ESPACIO para reiniciar.</p>`;
+        typeWriter(instrText, `<p class='text-danger'>FIN DE LA TRANSMISIÓN. <br><br>Sobreviviste ${tiempoSobrevivido} segundos. <br>Presiona ESPACIO para reiniciar.</p>`);
     } else {
         statusEl.innerText = "GLU PURGADO";
         statusEl.className = "text-success fw-bold";
-        instrText.innerHTML = `<p class='text-success'>¡VICTORIA! <br><br>Nivel ${nivel} superado. <br>Presiona ESPACIO para continuar.</p>`;
+        typeWriter(instrText, `<p class='text-success'>¡VICTORIA! <br><br>Nivel ${nivel} superado. <br>Presiona ESPACIO para continuar.</p>`);
     }
 }
 
@@ -329,7 +333,7 @@ function resetGame() {
     }, 1000);
     statusEl.innerText = `ACTIVE - NIVEL ${nivel}`; 
     statusEl.className = "text-success fw-bold";
-    instrText.innerHTML = `<p class='text-cyan'>NIVEL ${nivel} EN CURSO... <br><br>La velocidad del Grid ha aumentado.</p>`;
+    typeWriter(instrText, `<p class='text-cyan'>NIVEL ${nivel} EN CURSO... <br><br>La velocidad del Grid ha aumentado.</p>`);
     gameRunning = true;
 }
 
