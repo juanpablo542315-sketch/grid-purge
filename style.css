@@ -70,3 +70,8 @@ body {
     background: transparent; 
     display: block;
 }
+.text-cyan-status {
+    color: #00f2ff; /* El mismo azul cian de tu Grid */
+    text-shadow: 0 0 10px #00f2ff; /* Efecto neón para que no se pierda */
+    font-weight: bold;
+}
