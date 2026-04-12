@@ -6,7 +6,7 @@ const btnNext = document.getElementById('btn-next');
 const btnRestart = document.getElementById('btn-restart');
 const music = document.getElementById('tron-music');
 
-// --- SISTEMA DE AUDIO ---
+// --- SISTEMA DE AUDIO (Ajuste de precisión) ---
 const soundIntro = new Audio('assets/intro.mp3');
 const soundMotor = new Audio('assets/motor.wav');
 const soundGiro = new Audio('assets/giro.mp3');
@@ -15,10 +15,8 @@ soundIntro.loop = true;
 soundMotor.loop = true;
 soundMotor.volume = 0.4;
 
-// --- TRUCO PARA MOTOR ETERNO (EVITA EL CORTE EN RECTAS) ---
+// TRUCO PARA MOTOR ETERNO (EVITA EL CORTE EN RECTAS)
 soundMotor.addEventListener('timeupdate', function() {
-    // Si el audio está a 0.2 segundos de terminarse, lo regresamos al inicio
-    // antes de que llegue al silencio del final del archivo.
     if (this.currentTime > this.duration - 0.2) {
         this.currentTime = 0.1;
         this.play();
@@ -100,7 +98,10 @@ class Bike {
         }
         return false;
     }
+
+    // --- MÉTODO DRAW ACTUALIZADO (Motos más grandes y oscuras) ---
     draw() {
+        // 1. Dibujar la estela (trail) - SE MANTIENE IGUAL DE BRILLANTE
         ctx.beginPath();
         ctx.strokeStyle = this.color;
         ctx.lineWidth = 3;
@@ -114,10 +115,86 @@ class Bike {
         });
         ctx.lineTo(this.x * GRID_SIZE + 5, this.y * GRID_SIZE + 5);
         ctx.stroke();
-        ctx.shadowBlur = 0;
-        ctx.fillStyle = "#fff";
-        ctx.fillRect(this.x * GRID_SIZE, this.y * GRID_SIZE, GRID_SIZE, GRID_SIZE);
+        
+        // 2. DIBUJAR LA MINIMOTO ANIMADA
+        const cx = this.x * GRID_SIZE + 5; 
+        const cy = this.y * GRID_SIZE + 5; 
+        
+        // --- CAMBIO 1: Moto un 50% más grande (de 4 a 6) ---
+        const halfSize = 6; 
+
+        ctx.save(); 
+        ctx.translate(cx, cy); 
+
+        if (this.direction === 0) ctx.rotate(-Math.PI / 2); // Arriba
+        if (this.direction === 1) ctx.rotate(0);             // Derecha
+        if (this.direction === 2) ctx.rotate(Math.PI / 2);  // Abajo
+        if (this.direction === 3) ctx.rotate(Math.PI);      // Izquierda
+
+        // --- DISEÑO DE LA MOTO NEÓN OSCURECIDA ---
+        
+        // --- CAMBIO 2: Tonalidad más oscura para el cuerpo ---
+        // Función rápida para oscurecer un color hexadecimal
+        const obscurecerColor = (hex, factor) => {
+            // Quitar el # si existe
+            hex = hex.replace('#', '');
+            // Convertir a RGB
+            let r = parseInt(hex.substring(0, 2), 16);
+            let g = parseInt(hex.substring(2, 4), 16);
+            let b = parseInt(hex.substring(4, 6), 16);
+            // Multiplicar por el factor (0.0 a 1.0)
+            r = Math.floor(r * factor);
+            g = Math.floor(g * factor);
+            b = Math.floor(b * factor);
+            // Convertir de vuelta a hex padding con 0 si es necesario
+            const toHex = (c) => c.toString(16).padStart(2, '0');
+            return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+        };
+
+        const brightNeonColor = this.color; // Color original para el brillo
+        const darkNeonColor = obscurecerColor(this.color, 0.6); // Cuerpo 40% más oscuro
+        const coreColor = "#ffffff"; // Núcleo brillante (se mantiene)
+
+        // A) Sombra Neón (El Brillo Base) - Mantenemos el color original para un brillo sutil
+        ctx.shadowBlur = 10;
+        ctx.shadowColor = brightNeonColor;
+        ctx.fillStyle = darkNeonColor; // Pero rellenamos con el color oscuro
+        ctx.globalAlpha = 0.5; // Un poco más transparente para oscurecer el conjunto
+
+        // B) Cuerpo Principal - Ahora usa el color oscuro
+        ctx.beginPath();
+        ctx.moveTo(-halfSize + 1.5, -halfSize + 3); 
+        ctx.lineTo(halfSize, -1.5);                  
+        ctx.lineTo(halfSize, 1.5);                   
+        ctx.lineTo(-halfSize + 1.5, halfSize - 3);  
+        ctx.closePath();
+        ctx.fill();
+
+        // C) El Núcleo Brillante (Se mantiene blanco para diferenciar)
+        ctx.shadowBlur = 5;
+        ctx.shadowColor = coreColor;
+        ctx.fillStyle = coreColor;
+        ctx.globalAlpha = 1.0; 
+        ctx.beginPath();
+        ctx.moveTo(-halfSize + 3, 0);   
+        ctx.lineTo(halfSize - 1.5, -0.7); 
+        ctx.lineTo(halfSize - 1.5, 0.7);  
+        ctx.closePath();
+        ctx.fill();
+
+        // D) El Motor - Ahora usa el color oscuro
+        // --- CAMBIO 3: Motor proporcionalmente más grande ---
+        ctx.fillStyle = darkNeonColor;
+        ctx.globalAlpha = 0.8;
+        ctx.beginPath();
+        ctx.arc(-halfSize + 1.5, 0, 2, 0, Math.PI * 2); 
+        ctx.fill();
+
+        ctx.restore(); 
+        ctx.shadowBlur = 0; 
+        ctx.globalAlpha = 1.0;
     }
+
     kill() {
         if (this.alive) {
             this.alive = false;
@@ -262,17 +339,11 @@ document.addEventListener('keydown', (e) => {
     
     if (!gameRunning) return;
 
-    // --- SINCRONIZACIÓN DINÁMICA DE GIRO ---
     if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-        // 1. Sonido de giro
         soundGiro.currentTime = 0;
         soundGiro.play().catch(() => {});
-
-        // 2. Efecto de motor: Reiniciamos a 0 solo al girar para que
-        // el cambio de potencia coincida con el movimiento.
         soundMotor.currentTime = 0;
         soundMotor.playbackRate = 0.75; 
-        
         setTimeout(() => {
             if (gameRunning) soundMotor.playbackRate = 1.0;
         }, 150);
