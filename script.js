@@ -15,7 +15,6 @@ soundIntro.loop = true;
 soundMotor.loop = true;
 soundMotor.volume = 0.4;
 
-// TRUCO PARA MOTOR ETERNO (EVITA EL CORTE EN RECTAS)
 soundMotor.addEventListener('timeupdate', function() {
     if (this.currentTime > this.duration - 0.2) {
         this.currentTime = 0.1;
@@ -47,6 +46,13 @@ let puntajeMaximo = localStorage.getItem('tronMaxScore') || 0;
 let intervaloTiempo;
 let gameSpeed = 80;
 
+// --- ACTUALIZACIÓN DE LA INTERFAZ EXTERNA ---
+function updateUI() {
+    document.getElementById('stat-nivel').innerText = nivel;
+    document.getElementById('stat-tiempo').innerText = tiempoSobrevivido + "s";
+    document.getElementById('stat-record').innerText = puntajeMaximo + "s";
+}
+
 const messages = [
     "<p class='text-white'>SISTEMA: Conexión establecida... <br><br>Bienvenido, Usuario. Estás dentro de la red de combate.</p>",
     "<p class='text-cyan'>OBJETIVO: <br><br>Crea muros de luz para encerrar a GLU. No toques ninguna estela o serás desintegrado.</p>",
@@ -54,7 +60,6 @@ const messages = [
     "<p class='text-success fw-bold'>¡LISTO! <br><br>Presiona el botón para entrar al Grid y comenzar.</p>"
 ];
 
-// --- NUEVA LÓGICA TYPEWRITER (ESTILO ZELDA) ---
 let typingInterval; 
 function typeWriter(element, htmlText, speed = 30) {
     clearInterval(typingInterval);
@@ -75,7 +80,6 @@ function typeWriter(element, htmlText, speed = 30) {
     }, speed);
 }
 
-// Iniciar con el primer mensaje animado
 typeWriter(instrText, messages[0]);
 
 btnNext.addEventListener('click', () => {
@@ -84,7 +88,7 @@ btnNext.addEventListener('click', () => {
     }
     step++;
     if (step < messages.length) {
-        typeWriter(instrText, messages[step]); // Llamada al efecto Zelda
+        typeWriter(instrText, messages[step]);
     } else {
         btnNext.classList.add('d-none');
         btnRestart.classList.remove('d-none');
@@ -122,7 +126,6 @@ class Bike {
     }
 
     draw() {
-        // --- 1. DIBUJAR ESTELA (SE MANTIENE IGUAL, FASCINANTE) ---
         ctx.beginPath();
         ctx.strokeStyle = this.color;
         ctx.lineWidth = 3;
@@ -137,90 +140,50 @@ class Bike {
         ctx.lineTo(this.x * GRID_SIZE + 5, this.y * GRID_SIZE + 5);
         ctx.stroke();
         
-        // --- 2. DIBUJAR NUEVA FORMA DE MOTO (SEGÚN IMAGEN DE REFERENCIA) ---
         const cx = this.x * GRID_SIZE + 5; 
         const cy = this.y * GRID_SIZE + 5; 
-        const unit = GRID_SIZE / 10; // Unidad de medida basada en el grid
+        const unit = GRID_SIZE / 10;
 
         ctx.save(); 
         ctx.translate(cx, cy); 
 
-        // Rotar la moto según la dirección
-        if (this.direction === 0) ctx.rotate(-Math.PI / 2); // Norte
-        if (this.direction === 1) ctx.rotate(0);             // Este
-        if (this.direction === 2) ctx.rotate(Math.PI / 2);  // Sur
-        if (this.direction === 3) ctx.rotate(Math.PI);      // Oeste
+        if (this.direction === 0) ctx.rotate(-Math.PI / 2);
+        if (this.direction === 1) ctx.rotate(0);
+        if (this.direction === 2) ctx.rotate(Math.PI / 2);
+        if (this.direction === 3) ctx.rotate(Math.PI);
 
-        // Configuración de estilo neón para el cuerpo
         ctx.shadowBlur = 10;
         ctx.shadowColor = this.color;
         ctx.strokeStyle = this.color;
-        ctx.fillStyle = "#ffffff"; // Color del núcleo (blanco para que el neón resalte)
+        ctx.fillStyle = "#ffffff";
         ctx.lineWidth = 1.5;
-        ctx.globalAlpha = 1.0;
 
-        // A. Dibujar el Cuerpo Principal (La forma de cuña de la imagen)
         ctx.beginPath();
-        // Empezar en la punta delantera
         ctx.moveTo(8 * unit, 0);
-        // Lado superior hacia atrás y hacia afuera
         ctx.lineTo(-2 * unit, -4 * unit);
-        // Pequeño escalón hacia adentro
         ctx.lineTo(-1 * unit, -2 * unit);
-        // Pequeña extensión trasera
         ctx.lineTo(-4 * unit, -2 * unit);
-        // Parte trasera central
         ctx.lineTo(-4 * unit, 2 * unit);
-        // Simetría para el lado inferior
         ctx.lineTo(-1 * unit, 2 * unit);
         ctx.lineTo(-2 * unit, 4 * unit);
-        // Cerrar en la punta delantera
         ctx.closePath();
         ctx.stroke();
-        
-        // Rellenar el núcleo para darle solidez
         ctx.globalAlpha = 0.2;
         ctx.fill();
         ctx.globalAlpha = 1.0;
 
-        // B. Dibujar la Cabina/Piloto (El elemento morado de la imagen)
-        // Usamos un color morado neón fijo para la cabina, como en la referencia.
         ctx.shadowColor = "#cc00ff"; 
         ctx.fillStyle = "#ffffff";
         ctx.strokeStyle = "#cc00ff";
-        
         ctx.beginPath();
-        // Forma aerodinámica central
-        ctx.moveTo(1 * unit, -1.5 * unit); // Delantera superior cabina
-        ctx.lineTo(4 * unit, 0);            // Punta delantera cabina
-        ctx.lineTo(1 * unit, 1.5 * unit);  // Delantera inferior cabina
-        ctx.lineTo(-2 * unit, 1 * unit);   // Trasera inferior cabina
-        ctx.lineTo(-2 * unit, -1 * unit);  // Trasera superior cabina
+        ctx.moveTo(1 * unit, -1.5 * unit);
+        ctx.lineTo(4 * unit, 0);
+        ctx.lineTo(1 * unit, 1.5 * unit);
+        ctx.lineTo(-2 * unit, 1 * unit);
+        ctx.lineTo(-2 * unit, -1 * unit);
         ctx.closePath();
         ctx.stroke();
-        
-        // Relleno de la cabina
         ctx.globalAlpha = 0.3;
-        ctx.fill();
-
-        // C. Detalles adicionales (Aletas traseras pequeñas)
-        ctx.shadowBlur = 5;
-        ctx.shadowColor = this.color;
-        ctx.strokeStyle = this.color;
-        ctx.fillStyle = this.color;
-        
-        // Aleta Superior
-        ctx.beginPath();
-        ctx.moveTo(-1.5 * unit, -3 * unit);
-        ctx.lineTo(-3 * unit, -3 * unit);
-        ctx.lineTo(-3 * unit, -2 * unit);
-        ctx.fill();
-
-        // Aleta Inferior
-        ctx.beginPath();
-        ctx.moveTo(-1.5 * unit, 3 * unit);
-        ctx.lineTo(-3 * unit, 3 * unit);
-        ctx.lineTo(-3 * unit, 2 * unit);
         ctx.fill();
 
         ctx.restore(); 
@@ -287,11 +250,9 @@ function drawPerspectiveBackground() {
     }
     ctx.stroke();
     ctx.globalAlpha = 1;
-    ctx.fillStyle = "#fff";
-    ctx.font = "14px 'Courier New'";
-    ctx.fillText(`NIVEL: ${nivel}`, 20, 30);
-    ctx.fillText(`TIEMPO: ${tiempoSobrevivido}s`, 20, 50);
-    ctx.fillText(`RECORD: ${puntajeMaximo}s`, 20, 70);
+    
+    // Actualizamos las estadísticas externas en cada frame
+    updateUI();
 }
 
 function gameLoop() {
