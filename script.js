@@ -13,7 +13,17 @@ const soundGiro = new Audio('assets/giro.mp3');
 
 soundIntro.loop = true;
 soundMotor.loop = true;
-soundMotor.volume = 0.4; // Volumen del motor un poco más bajo para no saturar
+soundMotor.volume = 0.4;
+
+// --- TRUCO PARA MOTOR ETERNO (EVITA EL CORTE EN RECTAS) ---
+soundMotor.addEventListener('timeupdate', function() {
+    // Si el audio está a 0.2 segundos de terminarse, lo regresamos al inicio
+    // antes de que llegue al silencio del final del archivo.
+    if (this.currentTime > this.duration - 0.2) {
+        this.currentTime = 0.1;
+        this.play();
+    }
+});
 
 // --- 1. CONFIGURACIÓN DE MECÁNICA ---
 canvas.width = 800;
@@ -37,7 +47,7 @@ let nivel = 1;
 let tiempoSobrevivido = 0;
 let puntajeMaximo = localStorage.getItem('tronMaxScore') || 0;
 let intervaloTiempo;
-let gameSpeed = 80; // Velocidad inicial (Nivel 1)
+let gameSpeed = 80;
 
 const messages = [
     "<p class='text-white'>SISTEMA: Conexión establecida... <br><br>Bienvenido, Usuario. Estás dentro de la red de combate.</p>",
@@ -49,11 +59,9 @@ const messages = [
 instrText.innerHTML = messages[0];
 
 btnNext.addEventListener('click', () => {
-    // INICIAR INTRO AL DAR CLIC EN SIGUIENTE
     if (soundIntro.paused) {
         soundIntro.play().catch(() => {});
     }
-
     step++;
     if (step < messages.length) {
         instrText.innerHTML = messages[step];
@@ -86,7 +94,6 @@ class Bike {
         if (this.direction === 2) this.y++; 
         if (this.direction === 3) this.x--;
     }
-
     checkDeath() {
         if (this.x < 0 || this.x >= WIDTH_UNITS || this.y < 0 || this.y >= HEIGHT_UNITS || gridData[this.x][this.y]) {
             return true;
@@ -128,7 +135,6 @@ function updateAdvancedIA() {
         if (d === 0) ny--; if (d === 1) nx++; if (d === 2) ny++; if (d === 3) nx--;
         return nx >= 0 && nx < WIDTH_UNITS && ny >= 0 && ny < HEIGHT_UNITS && !gridData[nx][ny];
     });
-
     if (safeDirs.length > 0) {
         let bestDir = safeDirs[0];
         let minDist = Infinity;
@@ -155,12 +161,10 @@ function drawPerspectiveBackground() {
     gradient.addColorStop(1, "#000");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-
     ctx.beginPath();
     ctx.strokeStyle = GRID_COLOR;
     ctx.lineWidth = 1;
     ctx.globalAlpha = 0.3;
-
     for (let i = 0; i < 20; i++) {
         let y = (Math.pow(1.2, i + gridOffset) * 10) + VANISHING_POINT_Y;
         if (y > canvas.height) continue;
@@ -173,8 +177,6 @@ function drawPerspectiveBackground() {
     }
     ctx.stroke();
     ctx.globalAlpha = 1;
-
-    // --- DIBUJAR UI DE TIEMPO Y NIVEL ---
     ctx.fillStyle = "#fff";
     ctx.font = "14px 'Courier New'";
     ctx.fillText(`NIVEL: ${nivel}`, 20, 30);
@@ -189,7 +191,6 @@ function gameLoop() {
         updateAdvancedIA();
         playerBike.update();
         iaBike.update();
-
         if (playerBike.x === iaBike.x && playerBike.y === iaBike.y) {
             playerBike.alive = false;
             iaBike.alive = false;
@@ -204,24 +205,19 @@ function gameLoop() {
     }
     playerBike.draw();
     iaBike.draw();
-    
     setTimeout(() => requestAnimationFrame(gameLoop), gameSpeed); 
 }
 
 function endGame(winner) {
     gameRunning = false;
     clearInterval(intervaloTiempo);
-
-    // CONTROL DE AUDIO: Apagar motor y volver a la intro
     soundMotor.pause();
     soundMotor.currentTime = 0;
     soundIntro.play().catch(() => {});
-
     if (tiempoSobrevivido > puntajeMaximo) {
         puntajeMaximo = tiempoSobrevivido;
         localStorage.setItem('tronMaxScore', puntajeMaximo);
     }
-
     if (winner === "IA") {
         statusEl.innerText = "HAS SIDO VENCIDO POR GLU";
         statusEl.className = "text-danger fw-bold";
@@ -234,12 +230,10 @@ function endGame(winner) {
 }
 
 function resetGame() {
-    // CONTROL DE AUDIO: Detener intro y arrancar motor
     soundIntro.pause();
     soundIntro.currentTime = 0;
-    soundMotor.playbackRate = 1.0; // Aseguramos velocidad normal al empezar
+    soundMotor.playbackRate = 1.0;
     soundMotor.play().catch(() => {});
-
     if (!playerBike.alive) {
         nivel = 1;
         gameSpeed = 80;
@@ -248,17 +242,14 @@ function resetGame() {
         if (nivel === 2) gameSpeed = 50; 
         if (nivel === 3) gameSpeed = 30; 
     }
-
     gridData = Array.from({length: WIDTH_UNITS}, () => Array(HEIGHT_UNITS).fill(null));
     playerBike.reset(WIDTH_UNITS * 0.2, 25, 1);
     iaBike.reset(WIDTH_UNITS * 0.8, 25, 3);
-    
     tiempoSobrevivido = 0;
     clearInterval(intervaloTiempo);
     intervaloTiempo = setInterval(() => {
         if (gameRunning) tiempoSobrevivido++;
     }, 1000);
-
     statusEl.innerText = `ACTIVE - NIVEL ${nivel}`; 
     statusEl.className = "text-success fw-bold";
     instrText.innerHTML = `<p class='text-cyan'>NIVEL ${nivel} EN CURSO... <br><br>La velocidad del Grid ha aumentado.</p>`;
@@ -271,21 +262,20 @@ document.addEventListener('keydown', (e) => {
     
     if (!gameRunning) return;
 
-    // --- NUEVA LÓGICA DE AUDIO: SINCRONIZACIÓN FORZADA ---
+    // --- SINCRONIZACIÓN DINÁMICA DE GIRO ---
     if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-        // 1. Efecto de giro (click digital)
+        // 1. Sonido de giro
         soundGiro.currentTime = 0;
         soundGiro.play().catch(() => {});
 
-        soundMotor.currentTime = 0; 
-        soundMotor.playbackRate = 0.75; // Baja revoluciones (el "pum")
+        // 2. Efecto de motor: Reiniciamos a 0 solo al girar para que
+        // el cambio de potencia coincida con el movimiento.
+        soundMotor.currentTime = 0;
+        soundMotor.playbackRate = 0.75; 
         
-        // Recuperación ultra rápida de potencia
         setTimeout(() => {
-            if (gameRunning) {
-                soundMotor.playbackRate = 1.0; 
-            }
-        }, 100); // 100ms es el tiempo ideal para el oído
+            if (gameRunning) soundMotor.playbackRate = 1.0;
+        }, 150);
     }
 
     if (e.key === "ArrowUp" && playerBike.direction !== 2) playerBike.direction = 0;
