@@ -8,7 +8,7 @@ const music = document.getElementById('tron-music');
 
 // --- SISTEMA DE AUDIO ---
 const soundIntro = new Audio('assets/intro.mp3');
-const soundMotor = new Audio('assets/motor.mp3');
+const soundMotor = new Audio('assets/motor.wav');
 const soundGiro = new Audio('assets/giro.mp3');
 
 soundIntro.loop = true;
@@ -237,6 +237,7 @@ function resetGame() {
     // CONTROL DE AUDIO: Detener intro y arrancar motor
     soundIntro.pause();
     soundIntro.currentTime = 0;
+    soundMotor.playbackRate = 1.0; // Aseguramos velocidad normal al empezar
     soundMotor.play().catch(() => {});
 
     if (!playerBike.alive) {
@@ -270,10 +271,21 @@ document.addEventListener('keydown', (e) => {
     
     if (!gameRunning) return;
 
-    // SONIDO DE GIRO AL TOCAR FLECHAS
+    // --- NUEVA LÓGICA DE AUDIO: SINCRONIZACIÓN FORZADA ---
     if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+        // 1. Efecto de giro (click digital)
         soundGiro.currentTime = 0;
         soundGiro.play().catch(() => {});
+
+        soundMotor.currentTime = 0; 
+        soundMotor.playbackRate = 0.75; // Baja revoluciones (el "pum")
+        
+        // Recuperación ultra rápida de potencia
+        setTimeout(() => {
+            if (gameRunning) {
+                soundMotor.playbackRate = 1.0; 
+            }
+        }, 100); // 100ms es el tiempo ideal para el oído
     }
 
     if (e.key === "ArrowUp" && playerBike.direction !== 2) playerBike.direction = 0;
