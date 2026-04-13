@@ -11,9 +11,15 @@ const soundIntro = new Audio('assets/intro.mp3');
 const soundMotor = new Audio('assets/motor.wav');
 const soundGiro = new Audio('assets/giro.mp3');
 
+// NUEVOS SONIDOS DE INTERFAZ (WAV)
+const tronHoverSound = new Audio('assets/tron_hover.wav');
+const tronClickSound = new Audio('assets/tron_click.wav');
+
 soundIntro.loop = true;
 soundMotor.loop = true;
 soundMotor.volume = 0.4;
+tronHoverSound.volume = 0.5;
+tronClickSound.volume = 0.7;
 
 soundMotor.addEventListener('timeupdate', function() {
     if (this.currentTime > this.duration - 0.2) {
@@ -21,6 +27,31 @@ soundMotor.addEventListener('timeupdate', function() {
         this.play();
     }
 });
+
+// --- LÓGICA DE SONIDOS PARA BOTONES (CON EXCEPCIÓN) ---
+function agregarSonidosBotones(boton, id) {
+    // Sonido de Pulso (Hover) - Siempre suena al pasar el cursor
+    boton.addEventListener('mouseenter', () => {
+        tronHoverSound.currentTime = 0;
+        tronHoverSound.play().catch(e => {});
+    });
+
+    // Sonido de Clic (Apertura de Disco) - Con tu excepción específica
+    boton.addEventListener('mousedown', () => {
+        // NO suena si es el botón REINICIAR o si es el botón SIGUIENTE en el paso final (listo para jugar)
+        const esUltimoPaso = (id === 'btn-next' && step >= 3);
+        const esReiniciar = (id === 'btn-restart');
+
+        if (!esUltimoPaso && !esReiniciar) {
+            tronClickSound.currentTime = 0;
+            tronClickSound.play().catch(e => {});
+        }
+    });
+}
+
+// Aplicamos a tus botones
+agregarSonidosBotones(btnNext, 'btn-next');
+agregarSonidosBotones(btnRestart, 'btn-restart');
 
 // --- 1. CONFIGURACIÓN DE MECÁNICA ---
 canvas.width = 800;
