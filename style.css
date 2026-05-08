@@ -147,17 +147,26 @@ html, body {
 @media (max-width: 992px) and (orientation: landscape) {
     #orientation-overlay { display: none !important; }
 
+    /* 1. Liberamos un poco el bloqueo para que no se trabe */
     body, html {
-        overflow: hidden !important; 
-        height: 100vh !important;
+        overflow-x: hidden !important;
+        overflow-y: hidden !important; /* Mantenemos el no-scroll */
+        height: 100% !important;
     }
 
-    nav.navbar { height: 12vh !important; padding: 0 10px !important; }
-    footer { height: 6vh !important; display: flex; align-items: center; }
+    /* 2. Nav y Footer casi invisibles para dar espacio al contenido */
+    nav.navbar { 
+        height: 8vh !important; 
+        min-height: 30px !important;
+        padding: 0 10px !important; 
+    }
+    footer { height: 4vh !important; }
 
+    /* 3. Contenedor principal sin márgenes estorbosos */
     main.container-fluid {
-        height: 82vh !important;
-        padding: 5px !important;
+        height: 88vh !important;
+        padding: 2px !important;
+        margin: 0 !important;
         display: flex;
         align-items: center;
     }
@@ -168,60 +177,77 @@ html, body {
         width: 100%;
         height: 100%;
         margin: 0 !important;
+        align-items: stretch; /* Estira stats y juego para que usen el alto total */
     }
 
+    /* 4. PANEL DE STATS (Izquierda) - El culpable de empujar el botón */
     .col-lg-4 {
-        width: 35% !important;
-        height: 100%;
-        padding: 0 !important;
+        width: 30% !important;
+        height: 100% !important;
+        padding: 2px !important;
+        display: flex;
+        flex-direction: column;
     }
 
     .card.bg-black {
         height: 100% !important;
-        scale: 0.85;
-        transform-origin: left center;
-        border-width: 1px !important;
+        margin: 0 !important;
+        scale: 0.8; /* Lo achicamos un poco más */
+        transform-origin: top left;
+        display: flex;
+        flex-direction: column;
     }
 
+    .card-body {
+        padding: 5px !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between; /* Empuja el botón de "Siguiente" hacia arriba */
+    }
+
+    /* Achicamos el texto de instrucciones para que no ocupe tanto espacio */
+    #instruction-text { 
+        font-size: 0.65rem !important; 
+        line-height: 1.1 !important;
+        margin: 2px 0 !important;
+        max-height: 60px;
+        overflow-y: auto;
+    }
+
+    .tron-title-style { font-size: 0.7rem !important; }
+
+    /* 5. PANEL DEL JUEGO (Derecha) */
     .col-lg-8 {
-        width: 65% !important;
-        height: 100%;
-        padding: 0 !important;
+        width: 70% !important;
+        height: 100% !important;
+        padding: 2px !important;
         position: relative;
     }
 
     #game-container {
-        height: 100% !important; 
-        width: 98% !important;
-        max-width: none !important;
-        border-radius: 10px;
+        height: 95% !important; /* Que no use el 100% para no salirse */
+        width: 100% !important;
+        margin: 0 !important;
     }
 
     #gameCanvas {
-        height: 100% !important;
         width: 100% !important;
+        height: 100% !important;
         object-fit: contain;
     }
 
+    /* 6. CONTROLES - Esquina derecha inferior */
     #mobile-dpad {
         position: absolute;
-        bottom: 10px;
-        right: 15px;
+        bottom: 5px;
+        right: 10px;
         z-index: 1000;
-        margin: 0 !important;
-        display: flex !important;
-        flex-direction: column;
-        align-items: center;
-        gap: 4px;
+        gap: 2px;
     }
 
     .btn-grid-touch {
-        width: 44px !important;
-        height: 44px !important;
-        font-size: 18px !important;
-        border-radius: 10px !important;
-        background: rgba(255, 255, 255, 0.15) !important; 
-        border: 1px solid rgba(255, 255, 255, 0.4) !important;
-        backdrop-filter: blur(4px);
+        width: 40px !important; /* Más pequeños para no estorbar */
+        height: 40px !important;
+        font-size: 16px !important;
     }
 }
