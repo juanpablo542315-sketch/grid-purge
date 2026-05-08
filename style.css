@@ -11,23 +11,14 @@ body {
     color: #fff;  
     background: #101010 url('assets/background-tron.jpg') no-repeat center center fixed;
     background-size: cover;
-    overflow-x: hidden;
+    /* REHABILITAMOS EL SCROLL */
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
 }
 
 .bg-black { background-color: #000 !important; }
 
-.text-cyan {
-    color: var(--neon-blue);
-    text-shadow: 0 0 10px var(--neon-blue);
-}
-
-.border-primary { border-color: var(--neon-blue) !important; }
-
-.shadow-neon {
-    box-shadow: 0 0 20px rgba(0, 242, 255, 0.25);
-}
-
-/* --- BOTONES --- */
+/* --- BOTONES NEÓN --- */
 .btn-outline-cyan, #btn-restart {
     color: var(--neon-blue);
     border: 1px solid var(--neon-blue);
@@ -42,15 +33,16 @@ body {
     box-shadow: 0 0 20px var(--neon-blue);
 }
 
-/* Contenedor del Juego */
+/* Contenedor del Juego (Ajustado para no trabarse) */
 #game-container {
     background-color: #000;
-    height: 500px;
+    height: 450px;
     width: 100%;
     max-width: 800px;
-    margin: 0 auto;
+    margin: 10px auto;
     position: relative;
     border: 2px solid var(--neon-blue);
+    overflow: hidden; /* Esto es solo para que el video no se salga del borde */
 }
 
 #bg-video {
@@ -69,17 +61,9 @@ body {
     z-index: 2;
     background: transparent; 
     display: block;
-    max-width: 100%;
-    height: auto;
-}
-
-/* Títulos Tron */
-.tron-title-style {
-  font-family: 'Orbitron', sans-serif !important;
-  text-transform: uppercase;
-  letter-spacing: 4px;
-  color: #fff !important;
-  text-shadow: 0 0 10px var(--neon-blue);
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
 }
 
 /* --- OVERLAY DE ROTACIÓN --- */
@@ -88,39 +72,60 @@ body {
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: #000;
-    z-index: 9999;
+    z-index: 99999;
     justify-content: center;
     align-items: center;
     color: var(--neon-blue);
 }
 
-/* Responsive: Volver a activar el aviso si es vertical */
+/* --- DISEÑO MÓVIL (Con Scroll) --- */
 @media (max-width: 992px) {
-    #game-container { height: 350px; }
-    
+    /* Si el celular está vertical, bloqueamos con el aviso */
     @media (orientation: portrait) {
-        #orientation-overlay { display: flex; }
+        #orientation-overlay { display: flex !important; }
+        body { overflow: hidden; }
     }
-}
 
-/* Botones Táctiles */
-#mobile-dpad {
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+    /* Si está en horizontal, permitimos deslizar */
+    @media (orientation: landscape) {
+        #orientation-overlay { display: none !important; }
+        
+        main.container-fluid {
+            padding: 10px !important;
+        }
 
-.btn-grid-touch {
-    width: 60px;
-    height: 60px;
-    background: rgba(0, 242, 255, 0.1);
-    border: 2px solid var(--neon-blue);
-    color: var(--neon-blue);
-    font-size: 24px;
-    border-radius: 50%;
-    margin: 5px;
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+        .row {
+            flex-direction: column !important; /* Stats arriba, Juego abajo */
+            align-items: center;
+        }
+
+        .col-lg-4, .col-lg-8 {
+            width: 100% !important;
+            margin-bottom: 20px;
+        }
+
+        #game-container {
+            height: 320px !important; /* Altura segura para que no se pierda */
+        }
+
+        /* Botones Táctiles (Visibles y funcionales) */
+        #mobile-dpad {
+            display: flex !important;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 15px;
+            padding-bottom: 30px; /* Espacio para poder scrollear */
+        }
+
+        .btn-grid-touch {
+            width: 60px !important;
+            height: 60px !important;
+            background: rgba(0, 242, 255, 0.2) !important;
+            border: 2px solid var(--neon-blue) !important;
+            color: var(--neon-blue) !important;
+            font-size: 24px !important;
+            border-radius: 50% !important;
+            margin: 5px !important;
+        }
+    }
 }
