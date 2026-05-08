@@ -46,7 +46,7 @@ body {
 /* Contenedor del Video y Canvas */
 #game-container {
     background-color: #000;
-    height: 500px; /* Se ajustará en móvil por media query */
+    height: 500px; 
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
@@ -102,18 +102,18 @@ html, body {
 }
 
 /* =========================================================
-   CONTROLES MÓVILES & ORIENTACIÓN
+   OVERLAY DE ORIENTACIÓN (Manda en vertical)
    ========================================================= */
-
 #orientation-overlay {
-    display: none;
+    display: none; /* Oculto por defecto */
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: #000;
-    z-index: 9999;
+    z-index: 99999; /* Máxima prioridad para bloquear clics */
     justify-content: center;
     align-items: center;
     color: var(--neon-blue);
+    text-align: center;
 }
 
 .rotate-icon { font-size: 50px; animation: rotate 2s infinite; }
@@ -131,10 +131,24 @@ html, body {
     touch-action: manipulation;
 }
 
-/* PROTOCOLO HORIZONTAL: TODO EN UNA PANTALLA */
+/* =========================================================
+   PANTALLA VERTICAL: BLOQUEO TOTAL
+   ========================================================= */
+@media (max-width: 992px) and (orientation: portrait) {
+    #orientation-overlay { 
+        display: flex !important; /* Bloquea la pantalla */
+    }
+    body { overflow: hidden; }
+}
+
+/* =========================================================
+   PROTOCOLO HORIZONTAL: CERO SCROLL Y UNIFICACIÓN
+   ========================================================= */
 @media (max-width: 992px) and (orientation: landscape) {
+    #orientation-overlay { display: none !important; }
+
     body, html {
-        overflow: hidden !important; /* Cero Scroll */
+        overflow: hidden !important; 
         height: 100vh !important;
     }
 
@@ -156,7 +170,6 @@ html, body {
         margin: 0 !important;
     }
 
-    /* Stats Panel (Izquierda) */
     .col-lg-4 {
         width: 35% !important;
         height: 100%;
@@ -170,7 +183,6 @@ html, body {
         border-width: 1px !important;
     }
 
-    /* Área de Juego (Derecha) */
     .col-lg-8 {
         width: 65% !important;
         height: 100%;
@@ -179,8 +191,8 @@ html, body {
     }
 
     #game-container {
-        height: 100% !important; /* Ocupa todo el alto disponible */
-        width: 95% !important;
+        height: 100% !important; 
+        width: 98% !important;
         max-width: none !important;
         border-radius: 10px;
     }
@@ -191,7 +203,6 @@ html, body {
         object-fit: contain;
     }
 
-    /* CONTROLES EN LA ESQUINA DERECHA INFERIOR (ZONA VERDE) */
     #mobile-dpad {
         position: absolute;
         bottom: 10px;
@@ -209,13 +220,8 @@ html, body {
         height: 44px !important;
         font-size: 18px !important;
         border-radius: 10px !important;
-        background: rgba(255, 255, 255, 0.15) !important; /* Cristal blanquizco */
+        background: rgba(255, 255, 255, 0.15) !important; 
         border: 1px solid rgba(255, 255, 255, 0.4) !important;
         backdrop-filter: blur(4px);
     }
-}
-
-/* Pantalla Vertical */
-@media (max-width: 992px) and (orientation: portrait) {
-    #orientation-overlay { display: flex; }
 }
