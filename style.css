@@ -46,7 +46,7 @@ body {
 /* Contenedor del Video y Canvas */
 #game-container {
     background-color: #000;
-    height: 500px;
+    height: 500px; /* Se ajustará en móvil por media query */
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
@@ -105,7 +105,6 @@ html, body {
    CONTROLES MÓVILES & ORIENTACIÓN
    ========================================================= */
 
-/* Overlay para forzar rotación */
 #orientation-overlay {
     display: none;
     position: fixed;
@@ -120,21 +119,11 @@ html, body {
 .rotate-icon { font-size: 50px; animation: rotate 2s infinite; }
 @keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(90deg); } }
 
-/* Botones Táctiles */
-#mobile-dpad {
-    margin-top: 20px;
-}
-
+/* Botones Táctiles Base */
 .btn-grid-touch {
-    width: 65px;
-    height: 65px;
-    background: rgba(0, 242, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
     border: 2px solid var(--neon-blue);
     color: var(--neon-blue);
-    font-size: 28px;
-    border-radius: 50%;
-    margin: 5px;
-    box-shadow: 0 0 10px var(--neon-blue);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -142,87 +131,91 @@ html, body {
     touch-action: manipulation;
 }
 
-.btn-grid-touch:active {
-    background: var(--neon-blue);
-    color: #000;
-}
-
+/* PROTOCOLO HORIZONTAL: TODO EN UNA PANTALLA */
 @media (max-width: 992px) and (orientation: landscape) {
-    /* 1. Permitimos scroll solo si es estrictamente necesario, pero evitamos que rebote */
-    body {
-        overflow-y: auto !important;
-        overflow-x: hidden !important;
-        height: auto !important;
-        position: relative !important;
+    body, html {
+        overflow: hidden !important; /* Cero Scroll */
+        height: 100vh !important;
     }
 
-    /* 2. Re-visualizamos el juego */
+    nav.navbar { height: 12vh !important; padding: 0 10px !important; }
+    footer { height: 6vh !important; display: flex; align-items: center; }
+
     main.container-fluid {
-        display: block !important;
-        height: auto !important;
-        padding: 10px !important;
+        height: 82vh !important;
+        padding: 5px !important;
+        display: flex;
+        align-items: center;
     }
 
-    /* 3. Ajuste de columnas para que no desaparezcan */
     .row {
-        display: flex !important;
-        flex-wrap: nowrap !important; /* Mantiene stats y juego en la misma línea */
-        align-items: flex-start;
-        justify-content: center;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        width: 100%;
+        height: 100%;
+        margin: 0 !important;
     }
 
-    /* 4. Panel de Datos (Izquierda) - Lo hacemos pequeño pero visible */
+    /* Stats Panel (Izquierda) */
     .col-lg-4 {
-        width: 30% !important;
-        display: block !important;
-    }
-    
-    .card.bg-black {
-        scale: 0.8; /* Reducimos el tamaño visual sin romper la estructura */
-        transform-origin: top left;
+        width: 35% !important;
+        height: 100%;
+        padding: 0 !important;
     }
 
-    /* 5. Panel del Juego (Derecha) - ¡Aquí vuelve tu juego! */
+    .card.bg-black {
+        height: 100% !important;
+        scale: 0.85;
+        transform-origin: left center;
+        border-width: 1px !important;
+    }
+
+    /* Área de Juego (Derecha) */
     .col-lg-8 {
-        width: 70% !important;
-        display: block !important;
+        width: 65% !important;
+        height: 100%;
+        padding: 0 !important;
         position: relative;
     }
 
     #game-container {
-        height: 300px !important; /* Altura fija segura para móviles */
-        width: 100% !important;
-        max-width: 100% !important;
-        margin: 0 auto !important;
+        height: 100% !important; /* Ocupa todo el alto disponible */
+        width: 95% !important;
+        max-width: none !important;
+        border-radius: 10px;
     }
 
     #gameCanvas {
-        width: 100% !important;
         height: 100% !important;
+        width: 100% !important;
         object-fit: contain;
     }
 
-    /* 6. CONTROLES EN LA ZONA QUE PEDISTE (Flotantes) */
+    /* CONTROLES EN LA ESQUINA DERECHA INFERIOR (ZONA VERDE) */
     #mobile-dpad {
+        position: absolute;
+        bottom: 10px;
+        right: 15px;
+        z-index: 1000;
+        margin: 0 !important;
         display: flex !important;
         flex-direction: column;
         align-items: center;
-        position: fixed; /* Los dejamos fijos a la pantalla */
-        bottom: 20px;
-        right: 20px;
-        z-index: 9999;
-        gap: 5px;
+        gap: 4px;
     }
 
-    /* Botones Neón Cyan */
     .btn-grid-touch {
-        width: 50px !important;
-        height: 50px !important;
-        background: rgba(0, 242, 255, 0.2) !important;
-        border: 2px solid #00f2ff !important;
-        color: #00f2ff !important;
-        border-radius: 12px !important;
-        font-size: 20px !important;
-        box-shadow: 0 0 10px rgba(0, 242, 255, 0.5) !important;
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 18px !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.15) !important; /* Cristal blanquizco */
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        backdrop-filter: blur(4px);
     }
+}
+
+/* Pantalla Vertical */
+@media (max-width: 992px) and (orientation: portrait) {
+    #orientation-overlay { display: flex; }
 }
