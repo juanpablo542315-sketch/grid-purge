@@ -1,7 +1,7 @@
 :root {
     --neon-blue: #00f2ff;
     --dark-bg: #0b0e14;
-    --neon-orange: #ff9f43;
+    --neon-orange: #ff9f43; /* El naranja de GLU */
 }
 
 body {
@@ -11,14 +11,25 @@ body {
     color: #fff;  
     background: #101010 url('assets/background-tron.jpg') no-repeat center center fixed;
     background-size: cover;
-    /* REHABILITAMOS EL SCROLL */
     overflow-y: auto !important;
     overflow-x: hidden !important;
 }
 
 .bg-black { background-color: #000 !important; }
 
-/* --- BOTONES NEÓN --- */
+/* --- COLORES NEÓN --- */
+.text-cyan {
+    color: var(--neon-blue);
+    text-shadow: 0 0 10px var(--neon-blue);
+}
+
+/* Color Naranja Neón para el Programa/Enemigo */
+.text-orange-neon, .text-warning {
+    color: var(--neon-orange) !important;
+    text-shadow: 0 0 15px var(--neon-orange), 0 0 30px var(--neon-orange) !important;
+}
+
+/* --- BOTONES --- */
 .btn-outline-cyan, #btn-restart {
     color: var(--neon-blue);
     border: 1px solid var(--neon-blue);
@@ -33,16 +44,15 @@ body {
     box-shadow: 0 0 20px var(--neon-blue);
 }
 
-/* Contenedor del Juego (Ajustado para no trabarse) */
+/* Contenedor del Juego */
 #game-container {
     background-color: #000;
-    height: 450px;
+    height: 500px;
     width: 100%;
     max-width: 800px;
-    margin: 10px auto;
+    margin: 0 auto;
     position: relative;
     border: 2px solid var(--neon-blue);
-    overflow: hidden; /* Esto es solo para que el video no se salga del borde */
 }
 
 #bg-video {
@@ -78,54 +88,75 @@ body {
     color: var(--neon-blue);
 }
 
-/* --- DISEÑO MÓVIL (Con Scroll) --- */
+/* --- DISEÑO PARA MÓVILES --- */
 @media (max-width: 992px) {
-    /* Si el celular está vertical, bloqueamos con el aviso */
+    /* Vertical: Aviso */
     @media (orientation: portrait) {
         #orientation-overlay { display: flex !important; }
         body { overflow: hidden; }
     }
 
-    /* Si está en horizontal, permitimos deslizar */
+    /* Horizontal: Dos Columnas (Instrucciones Izq / Juego Der) */
     @media (orientation: landscape) {
         #orientation-overlay { display: none !important; }
         
-        main.container-fluid {
-            padding: 10px !important;
-        }
+        main.container-fluid { padding: 5px !important; }
 
         .row {
-            flex-direction: column !important; /* Stats arriba, Juego abajo */
-            align-items: center;
+            display: flex !important;
+            flex-direction: row !important; /* Forzamos las dos columnas */
+            flex-wrap: nowrap !important;
+            align-items: flex-start;
         }
 
-        .col-lg-4, .col-lg-8 {
-            width: 100% !important;
-            margin-bottom: 20px;
+        /* Columna de Instrucciones (Izquierda) */
+        .col-lg-4 {
+            width: 30% !important;
+            display: block !important;
+            padding: 5px !important;
+        }
+
+        .card.bg-black {
+            scale: 0.85;
+            transform-origin: top left;
+        }
+
+        /* Columna de Juego (Derecha) */
+        .col-lg-8 {
+            width: 70% !important;
+            display: block !important;
+            padding: 5px !important;
+            position: relative;
         }
 
         #game-container {
-            height: 320px !important; /* Altura segura para que no se pierda */
+            height: 320px !important;
+            width: 100% !important;
         }
 
-        /* Botones Táctiles (Visibles y funcionales) */
+        /* CONTROLES CRISTAL AZUL EN ESQUINA DERECHA */
         #mobile-dpad {
             display: flex !important;
             flex-direction: column;
             align-items: center;
-            margin-top: 15px;
-            padding-bottom: 30px; /* Espacio para poder scrollear */
+            position: absolute;
+            bottom: 15px;
+            right: 20px;
+            z-index: 1000;
+            gap: 5px;
         }
 
         .btn-grid-touch {
-            width: 60px !important;
-            height: 60px !important;
-            background: rgba(0, 242, 255, 0.2) !important;
+            width: 50px !important;
+            height: 50px !important;
+            background: rgba(0, 242, 255, 0.1) !important;
             border: 2px solid var(--neon-blue) !important;
             color: var(--neon-blue) !important;
-            font-size: 24px !important;
-            border-radius: 50% !important;
-            margin: 5px !important;
+            border-radius: 12px !important;
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
     }
 }
