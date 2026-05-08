@@ -147,127 +147,82 @@ html, body {
     color: #000;
 }
 
-/* Responsive Queries */
-@media (max-width: 992px) {
-    #game-container { height: 350px; }
-    
-    /* Mostrar aviso si el móvil está en vertical */
-    @media (orientation: portrait) {
-        #orientation-overlay { display: flex; }
-    }
-}
-/* =========================================================
-   PROTOCOLO MÓVIL FINAL: VISTA UNIFICADA (SIN SCROLL)
-   ========================================================= */
-
 @media (max-width: 992px) and (orientation: landscape) {
-    /* 1. Congelar la pantalla para que nada se mueva */
-    body, html {
-        height: 100% !important;
-        overflow: hidden !important;
-        position: fixed;
-        width: 100%;
+    /* 1. Permitimos scroll solo si es estrictamente necesario, pero evitamos que rebote */
+    body {
+        overflow-y: auto !important;
+        overflow-x: hidden !important;
+        height: auto !important;
+        position: relative !important;
     }
 
-    /* 2. Nav y Footer minúsculos para ganar espacio */
-    nav.navbar { 
-        height: 40px !important; 
-        padding: 0 10px !important; 
-        min-height: 40px !important;
-    }
-    .navbar-brand { font-size: 0.7rem !important; letter-spacing: 1px !important; }
-
-    footer { height: 25px !important; display: flex; align-items: center; justify-content: center; }
-    footer p { font-size: 0.5rem !important; }
-
-    /* 3. El contenedor principal ocupa el 100% del centro */
+    /* 2. Re-visualizamos el juego */
     main.container-fluid {
-        height: calc(100vh - 65px) !important; /* Pantalla menos nav y footer */
-        padding: 0 5px !important;
-        margin: 0 !important;
-        display: flex;
-        align-items: center;
+        display: block !important;
+        height: auto !important;
+        padding: 10px !important;
     }
 
-    .row { 
-        width: 100%; 
-        height: 100%; 
-        margin: 0 !important; 
-        display: flex !important; 
-        flex-wrap: nowrap !important; /* Evita que las columnas se encimen */
-    }
-
-    /* 4. Panel Izquierdo (Data Log) ultra compacto */
-    .col-lg-4 {
-        width: 35% !important;
-        padding: 2px !important;
-        height: 100%;
-        display: flex;
-        align-items: center;
-    }
-
-    .card.bg-black {
-        height: 95% !important;
-        width: 100%;
-        font-size: 0.6rem !important;
-        margin: 0 !important;
-        overflow: hidden;
-    }
-
-    .card-body { padding: 5px !important; }
-    #instruction-text { min-height: 40px !important; margin: 5px 0 !important; font-size: 0.65rem !important; }
-    .tron-title-style { font-size: 0.7rem !important; letter-spacing: 1px !important; }
-    #stats-panel div { margin-bottom: 2px !important; }
-    .btn { padding: 2px !important; font-size: 0.6rem !important; }
-
-    /* 5. Área de Juego (Derecha) */
-    .col-lg-8 {
-        width: 65% !important;
-        height: 100%;
-        padding: 2px !important;
-        position: relative;
-        display: flex;
-        align-items: center;
+    /* 3. Ajuste de columnas para que no desaparezcan */
+    .row {
+        display: flex !important;
+        flex-wrap: nowrap !important; /* Mantiene stats y juego en la misma línea */
+        align-items: flex-start;
         justify-content: center;
     }
 
+    /* 4. Panel de Datos (Izquierda) - Lo hacemos pequeño pero visible */
+    .col-lg-4 {
+        width: 30% !important;
+        display: block !important;
+    }
+    
+    .card.bg-black {
+        scale: 0.8; /* Reducimos el tamaño visual sin romper la estructura */
+        transform-origin: top left;
+    }
+
+    /* 5. Panel del Juego (Derecha) - ¡Aquí vuelve tu juego! */
+    .col-lg-8 {
+        width: 70% !important;
+        display: block !important;
+        position: relative;
+    }
+
     #game-container {
+        height: 300px !important; /* Altura fija segura para móviles */
         width: 100% !important;
-        height: 95% !important; /* Ocupa casi todo el alto de la columna */
-        margin: 0 !important;
-        border-width: 1px !important;
+        max-width: 100% !important;
+        margin: 0 auto !important;
     }
 
     #gameCanvas {
         width: 100% !important;
         height: 100% !important;
-        object-fit: contain; /* Encaja el juego sin salirse */
+        object-fit: contain;
     }
 
-    /* 6. CONTROLES EN LA ZONA VERDE (Abajo a la derecha) */
+    /* 6. CONTROLES EN LA ZONA QUE PEDISTE (Flotantes) */
     #mobile-dpad {
         display: flex !important;
         flex-direction: column;
         align-items: center;
-        position: absolute; /* Flotan sobre el canvas */
-        bottom: 10px;       /* Pegados abajo */
-        right: 10px;        /* Pegados a la derecha */
-        left: auto;         /* Quitamos el centrado anterior */
-        margin: 0 !important;
-        z-index: 1000;
-        gap: 2px;
+        position: fixed; /* Los dejamos fijos a la pantalla */
+        bottom: 20px;
+        right: 20px;
+        z-index: 9999;
+        gap: 5px;
     }
 
-    /* Botones pequeños para que no tapen el juego */
+    /* Botones Neón Cyan */
     .btn-grid-touch {
-        width: 42px !important;
-        height: 42px !important;
-        font-size: 16px !important;
-        background: rgba(255, 255, 255, 0.1) !important;
-        border: 1px solid rgba(0, 242, 255, 0.5) !important;
-        box-shadow: 0 0 5px rgba(0, 242, 255, 0.3) !important;
-        margin: 2px !important;
+        width: 50px !important;
+        height: 50px !important;
+        background: rgba(0, 242, 255, 0.2) !important;
+        border: 2px solid #00f2ff !important;
+        color: #00f2ff !important;
+        border-radius: 12px !important;
+        font-size: 20px !important;
+        box-shadow: 0 0 10px rgba(0, 242, 255, 0.5) !important;
     }
-    
-    .d-flex { gap: 2px !important; } /* Espacio entre flechas horizontales */
 }
