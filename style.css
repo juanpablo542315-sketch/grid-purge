@@ -157,117 +157,117 @@ html, body {
     }
 }
 /* =========================================================
-   PROTOCOLO CELULAR RADICAL: CERO SCROLL Y UNIFICACIÓN
+   PROTOCOLO MÓVIL FINAL: VISTA UNIFICADA (SIN SCROLL)
    ========================================================= */
 
 @media (max-width: 992px) and (orientation: landscape) {
-    /* 1. Bloqueamos el scroll de la página por completo */
-    body {
-        height: 100vh !important;
+    /* 1. Congelar la pantalla para que nada se mueva */
+    body, html {
+        height: 100% !important;
         overflow: hidden !important;
-        display: flex;
-        flex-direction: column;
+        position: fixed;
+        width: 100%;
     }
 
-    /* 2. Reducimos drásticamente el tamaño del NAV y FOOTER */
-    nav.navbar { height: 10vh !important; padding: 0 !important; }
-    nav.navbar .navbar-brand { font-size: 0.8rem !important; }
-    nav.navbar .text-secondary { display: none !important; } /* Ocultamos texto largo */
+    /* 2. Nav y Footer minúsculos para ganar espacio */
+    nav.navbar { 
+        height: 40px !important; 
+        padding: 0 10px !important; 
+        min-height: 40px !important;
+    }
+    .navbar-brand { font-size: 0.7rem !important; letter-spacing: 1px !important; }
 
-    footer { height: 5vh !important; padding: 0 !important; }
-    footer p { font-size: 0.6rem !important; margin: 0 !important; }
+    footer { height: 25px !important; display: flex; align-items: center; justify-content: center; }
+    footer p { font-size: 0.5rem !important; }
 
-    /* 3. Ajustamos el MAIN para que ocupe el resto de la pantalla (85vh) */
+    /* 3. El contenedor principal ocupa el 100% del centro */
     main.container-fluid {
-        flex: 1;
-        height: 85vh !important;
+        height: calc(100vh - 65px) !important; /* Pantalla menos nav y footer */
+        padding: 0 5px !important;
+        margin: 0 !important;
         display: flex;
         align-items: center;
-        justify-content: center;
-        padding: 5px !important;
-        margin: 0 !important;
     }
 
-    /* 4. Convertimos la ROW en un Flexbox horizontal perfecto */
-    .row {
-        display: flex !important;
-        flex-direction: row !important;
-        width: 100%;
-        height: 100%;
-        margin: 0 !important;
-        gap: 5px;
+    .row { 
+        width: 100%; 
+        height: 100%; 
+        margin: 0 !important; 
+        display: flex !important; 
+        flex-wrap: nowrap !important; /* Evita que las columnas se encimen */
     }
 
-    /* 5. ACHICAMOS el Panel de Datos (Izquierda) */
+    /* 4. Panel Izquierdo (Data Log) ultra compacto */
     .col-lg-4 {
-        width: 30% !important; /* Más angosto */
+        width: 35% !important;
+        padding: 2px !important;
         height: 100%;
-        padding: 0 !important;
         display: flex;
         align-items: center;
     }
 
     .card.bg-black {
+        height: 95% !important;
         width: 100%;
-        max-height: 95%; /* Que no toque los bordes */
+        font-size: 0.6rem !important;
         margin: 0 !important;
-        /* REDUCCIÓN RADICAL DE TEXTO INTERNO */
-        font-size: 0.7rem !important;
-        scale: 0.9;
-        transform-origin: left center;
+        overflow: hidden;
     }
-    .card-body { padding: 8px !important; }
-    .card-body h5 { font-size: 0.8rem !important; margin-bottom: 5px !important; }
-    #instruction-text { min-height: 60px !important; margin: 5px 0 !important; font-size: 0.75rem !important; }
-    #stats-panel { margin: 0 !important; }
-    .d-grid.gap-3 { gap: 5px !important; }
-    .btn { padding: 3px 10px !important; font-size: 0.7rem !important; }
 
-    /* 6. ACHICAMOS el Área de Juego (Derecha) */
+    .card-body { padding: 5px !important; }
+    #instruction-text { min-height: 40px !important; margin: 5px 0 !important; font-size: 0.65rem !important; }
+    .tron-title-style { font-size: 0.7rem !important; letter-spacing: 1px !important; }
+    #stats-panel div { margin-bottom: 2px !important; }
+    .btn { padding: 2px !important; font-size: 0.6rem !important; }
+
+    /* 5. Área de Juego (Derecha) */
     .col-lg-8 {
-        width: 70% !important; /* Más ancho para el juego */
+        width: 65% !important;
         height: 100%;
-        padding: 0 !important;
+        padding: 2px !important;
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: center;
     }
 
-    /* 7. REDUCCIÓN RADICAL DEL CANVAS (Para que no obligue al scroll) */
     #game-container {
         width: 100% !important;
-        height: 75vh !important; /* Forzamos la altura a 75% del alto de pantalla */
-        max-height: 75vh !important;
+        height: 95% !important; /* Ocupa casi todo el alto de la columna */
         margin: 0 !important;
-        border-width: 2px;
+        border-width: 1px !important;
     }
 
     #gameCanvas {
         width: 100% !important;
         height: 100% !important;
-        object-fit: contain; /* Encaja el canvas sin deformarlo */
+        object-fit: contain; /* Encaja el juego sin salirse */
     }
 
-    /* 8. POSICIONAMOS LOS CONTROLES (Dentro de la zona verde) */
+    /* 6. CONTROLES EN LA ZONA VERDE (Abajo a la derecha) */
     #mobile-dpad {
         display: flex !important;
         flex-direction: column;
         align-items: center;
-        position: absolute;
-        bottom: 10px; /* Separación del borde inferior */
-        right: 15px; /* Pegado a la derecha, para el pulgar */
-        z-index: 100;
-        gap: 5px;
+        position: absolute; /* Flotan sobre el canvas */
+        bottom: 10px;       /* Pegados abajo */
+        right: 10px;        /* Pegados a la derecha */
+        left: auto;         /* Quitamos el centrado anterior */
+        margin: 0 !important;
+        z-index: 1000;
+        gap: 2px;
     }
 
-    /* Botones más pequeños y transparentes */
+    /* Botones pequeños para que no tapen el juego */
     .btn-grid-touch {
-        width: 50px;
-        height: 50px;
-        font-size: 20px;
-        background: rgba(0, 242, 255, 0.1) !important;
-        border: 2px solid rgba(0, 242, 255, 0.4) !important;
-        color: #00f2ff !important;
-        border-radius: 12px;
+        width: 42px !important;
+        height: 42px !important;
+        font-size: 16px !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+        border: 1px solid rgba(0, 242, 255, 0.5) !important;
+        box-shadow: 0 0 5px rgba(0, 242, 255, 0.3) !important;
+        margin: 2px !important;
     }
+    
+    .d-flex { gap: 2px !important; } /* Espacio entre flechas horizontales */
 }
