@@ -1,14 +1,13 @@
 # 🟦 TRON LEGACY: EL GRAN RETO 🟧
 **Proyecto:** Examen Tema 2 - Graficación 2D  
 **Programador:** Juan Pablo Hernandez Martinez  
-**Entorno:** The Grid (La Red de Combate)
+**Entorno:** TRON LEGACY (La Red de Combate)**Tron Legacy**
 
 ## 📝 1. Contexto
-Este videojuego se sitúa en el universo digital de **Tron Legacy**, donde los programas y usuarios compiten en duelos de motocicletas de luz dentro de "The Grid". La estética se basa en un entorno cian y naranja de alto contraste, utilizando una perspectiva de punto de fuga para simular profundidad en un espacio bidimensional, recreando la atmósfera cyberpunk clásica de la película.
+Este videojuego se sitúa en el universo digital de **Tron Legacy** donde programas y usuarios compiten en duelos de motocicletas de luz dentro de "The Grid". La estética ha sido refinada para emular la tipografía Wireframe (transparente con contorno brillante) del título original de la película. El entorno utiliza una perspectiva de punto de fuga dinámica y una paleta de colores cian/naranja de alto contraste, recreando la atmósfera cyberpunk clásica.
 
 ## 🎯 2. Objetivo
-El **USUARIO** debe sobrevivir y vencer al **PROGRAMA (GLU)** mediante la creación de muros de luz persistentes. El objetivo primordial es maniobrar con precisión para forzar al oponente a colisionar contra una estela de luz (propia o ajena) o contra los límites perimetrales de la Red, evitando al mismo tiempo ser desintegrado por las trayectorias enemigas.
-
+El **USUARIO** debe sobrevivir y vencer al **PROGRAMA (GLU)** mediante la creación de muros de luz persistentes. El objetivo primordial es maniobrar con precisión para forzar al oponente a colisionar contra una estela de luz (propia o ajena) o contra los límites perimetrales de la Red. Cualquier contacto con un muro de luz resulta en la desintegración inmediata del código del programa.
 ## ⚖️ 3. Justificación Técnica
 El desarrollo de este simulador fundamenta el aprendizaje de la **Canvas API** a través de:
 * **Lógica de Colisiones:** Implementación de una matriz de datos que registra cada unidad del "Grid", permitiendo una detección de impactos inmediata y precisa.

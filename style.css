@@ -1,6 +1,7 @@
 :root {
     --neon-blue: #00f2ff;
     --dark-bg: #0b0e14;
+    --neon-orange: #ff9f43;
 }
 
 body {
@@ -10,6 +11,7 @@ body {
     color: #fff;  
     background: #101010 url('assets/background-tron.jpg') no-repeat center center fixed;
     background-size: cover;
+    overflow-x: hidden;
 }
 
 .bg-black { background-color: #000 !important; }
@@ -26,17 +28,14 @@ body {
 }
 
 /* --- AJUSTE DE BOTONES NEÓN --- */
-
-/* Aplicamos el estilo de "Siguiente" también al botón de "Reiniciar" */
 .btn-outline-cyan, #btn-restart {
     color: var(--neon-blue);
     border: 1px solid var(--neon-blue);
     background-color: transparent;
     transition: 0.3s;
-    text-transform: uppercase; /* Para mantener la estética Tron */
+    text-transform: uppercase;
 }
 
-/* Efecto Hover para AMBOS botones */
 .btn-outline-cyan:hover, #btn-restart:hover {
     background-color: var(--neon-blue) !important;
     color: #000 !important;
@@ -51,6 +50,7 @@ body {
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
+    position: relative;
 }
 
 #bg-video {
@@ -69,59 +69,162 @@ body {
     z-index: 2;
     background: transparent; 
     display: block;
+    max-width: 100%;
+    height: auto;
 }
+
 .text-cyan-status {
-    color: #00f2ff; /* El mismo azul cian de tu Grid */
-    text-shadow: 0 0 10px #00f2ff; /* Efecto neón para que no se pierda */
+    color: #00f2ff;
+    text-shadow: 0 0 10px #00f2ff;
     font-weight: bold;
 }
+
 /* =========================================================
-   SISTEMA TRON: EL GRAN RETO - CURSOR DISCO NARANJA (FINAL)
+   SISTEMA TRON: CURSOR & WIREFRAME
    ========================================================= */
-
 html, body {
-  /* Disco Naranja Neón con borde blanco de alto contraste */
-  /* Se eliminaron filtros complejos para asegurar compatibilidad total */
   cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='12' fill='none' stroke='white' stroke-width='1.5'/%3E%3Ccircle cx='14' cy='14' r='9' fill='none' stroke='%23ff9f43' stroke-width='3'/%3E%3Ccircle cx='14' cy='14' r='5' fill='%23ff9f43'/%3E%3Ccircle cx='14' cy='14' r='2' fill='white'/%3E%3C/svg%3E") 14 14, auto !important;
-}
-
-#gameCanvas {
-  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='28' viewBox='0 0 28 28'%3E%3Ccircle cx='14' cy='14' r='12' fill='none' stroke='white' stroke-width='1.5'/%3E%3Ccircle cx='14' cy='14' r='9' fill='none' stroke='%23ff9f43' stroke-width='3'/%3E%3Ccircle cx='14' cy='14' r='5' fill='%23ff9f43'/%3E%3Ccircle cx='14' cy='14' r='2' fill='white'/%3E%3C/svg%3E") 14 14, crosshair !important;
-}
-
-/* Mantener la mano en botones para usabilidad */
-button, .btn, #btn-next, #btn-restart, [button] {
-  cursor: pointer !important;
 }
 
 .tron-title-style {
   font-family: 'Orbitron', sans-serif !important;
   font-weight: 700 !important;
   text-transform: uppercase;
-  letter-spacing: 4px; /* Un poco más de espacio para separar las letras, estilo logo */
-
-  color: transparent !important; /* Vuelve el interior de la letra invisible */
-  
-
+  letter-spacing: 4px;
+  color: transparent !important;
   -webkit-text-stroke: 1.5px #ffffff !important; 
-  text-stroke: 1.5px #ffffff !important; /* Estándar, por si acaso */
-
- 
-  text-shadow: 
-    0 0 5px #ffffff,      /* Capa 1: Núcleo blanco nítido */
-    0 0 10px #00f2ff,    /* Capa 2: Resplandor Cian concéntrico */
-    0 0 15px #00f2ff,    /* Capa 3: Resplandor Cian concéntrico */
-    0 0 20px #00a0a0,    /* Capa 4: Base Cian oscura */
-    0 0 30px #00f2ff;    /* Capa 5: Resplandor externo completo */
+  text-shadow: 0 0 5px #ffffff, 0 0 10px #00f2ff, 0 0 20px #00f2ff, 0 0 30px #00f2ff;
 }
 
 .text-warning.tron-title-style {
-    /* Mismo contorno blanco, mismo efecto pero resplandor Naranja/Oro */
     -webkit-text-stroke: 1.5px #ffffff !important;
-    text-shadow: 
-      0 0 5px #ffffff,
-      0 0 10px #ff9f43,
-      0 0 15px #ff9f43,
-      0 0 20px #b06010,
-      0 0 30px #ff9f43;
+    text-shadow: 0 0 5px #ffffff, 0 0 10px #ff9f43, 0 0 20px #ff9f43, 0 0 30px #ff9f43;
+}
+
+/* =========================================================
+   CONTROLES MÓVILES & ORIENTACIÓN
+   ========================================================= */
+
+/* Overlay para forzar rotación */
+#orientation-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: #000;
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+    color: var(--neon-blue);
+}
+
+.rotate-icon { font-size: 50px; animation: rotate 2s infinite; }
+@keyframes rotate { 0% { transform: rotate(0deg); } 100% { transform: rotate(90deg); } }
+
+/* Botones Táctiles */
+#mobile-dpad {
+    margin-top: 20px;
+}
+
+.btn-grid-touch {
+    width: 65px;
+    height: 65px;
+    background: rgba(0, 242, 255, 0.1);
+    border: 2px solid var(--neon-blue);
+    color: var(--neon-blue);
+    font-size: 28px;
+    border-radius: 50%;
+    margin: 5px;
+    box-shadow: 0 0 10px var(--neon-blue);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    user-select: none;
+    touch-action: manipulation;
+}
+
+.btn-grid-touch:active {
+    background: var(--neon-blue);
+    color: #000;
+}
+
+/* Responsive Queries */
+@media (max-width: 992px) {
+    #game-container { height: 350px; }
+    
+    /* Mostrar aviso si el móvil está en vertical */
+    @media (orientation: portrait) {
+        #orientation-overlay { display: flex; }
+    }
+}
+/* =========================================================
+   ESTILO DE BOTONES CRISTAL (BLANQUISCOS)
+   ========================================================= */
+.btn-grid-touch {
+    width: 65px;
+    height: 65px;
+    background: rgba(255, 255, 255, 0.1) !important; /* Transparencia blanca */
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    border-radius: 15px;
+    font-size: 24px;
+    backdrop-filter: blur(8px); /* Efecto cristal */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    pointer-events: auto;
+}
+
+.btn-grid-touch:active {
+    background: rgba(255, 255, 255, 0.3) !important;
+    transform: scale(0.9);
+}
+
+/* =========================================================
+   PROTOCOLO CELULAR (SOLO HORIZONTAL)
+   ========================================================= */
+@media (max-width: 992px) and (orientation: landscape) {
+    /* Mantenemos visibilidad, solo ajustamos escalas */
+    nav, footer { scale: 0.8; }
+    
+    .row {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center;
+    }
+
+    .col-lg-4 { width: 35% !important; scale: 0.9; }
+    .col-lg-8 { width: 65% !important; }
+
+    #game-container {
+        height: 85vh !important;
+        border-width: 2px;
+    }
+
+    /* Posicionamos los botones dentro de la pantalla de juego */
+    #mobile-dpad {
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        position: absolute;
+        bottom: 15px;
+        left: 15px; /* Lado izquierdo para el pulgar */
+        z-index: 10;
+        gap: 8px;
+    }
+}
+
+/* Aviso de rotación */
+#orientation-overlay {
+    display: none;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 10000;
+    align-items: center;
+    justify-content: center;
+}
+
+@media (max-width: 992px) and (orientation: portrait) {
+    #orientation-overlay { display: flex; }
 }

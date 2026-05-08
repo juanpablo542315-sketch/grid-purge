@@ -1,0 +1,28 @@
+[33m10647b1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m)[m Ajuste de layout horizontal para móviles tipo consola
+[33m908eaa6[m Ajuste de layout horizontal para móviles tipo consola
+[33m9ad5fbc[m Feat: Implementación de controles táctiles y optimización para móviles
+[33m654e46b[m UI: CAMBIO DE README
+[33mfb01b22[m UI: Cambio de icon
+[33m7b7b51c[m Audio: Implementados efectos WAV para UI con silenciador en modo combate
+[33m98a9782[m nuevo favicon
+[33mba4e7e1[m UI: Implementado efecto Wireframe Neón Tron y cursor Disco de Identidad
+[33me90121d[m cambio de palabra
+[33m0ffc0f4[m Final: Cursor Disco Naranja optimizado para máxima compatibilidad
+[33m23b756b[m CORRECION DE CURSOR
+[33m1dc5167[m Entrega Final: Implementación de cursor neón SVG, documentación completa y favicon
+[33m972338a[m Final: Documentación README completa y activo de Favicon implementado
+[33mba4f87b[m UI: Cambio de palabra
+[33m9cc29b9[m UI: Cambio de palabras de texto
+[33me888c5c[m UI: Color azul neón aplicado a la etiqueta STATUS para mejor visibilidad
+[33mde42172[m UI: Puntuación movida al panel izquierdo y limpieza total del área de juego en el Canvas
+[33md62cba1[m Mejora: Nuevo diseño de motos (referencia), brillo en botón restart y texto tipo Zelda
+[33mbfc449a[m UI: Corregido brillo neón en botón restart y añadido efecto Typewriter Zelda
+[33mdc894b6[m UI: CAMBIO DE SINCRONIZACION DE LETRAS
+[33me1e89f8[m UI: Motos más grandes y oscuras con núcleo neón brillante
+[33mc5c7bca[m Audio: Implementación de loop infinito y sincronización de motor en WAV
+[33m55b8ba4[m Fix: Motor sincronizado en formato WAV con efecto de giro 90 grados
+[33m58e0ddb[m UI/Audio: Fondo de pantalla Tron Legacy y nuevo sonido de giro (90 grados)
+[33m62f7475[m UI: Add TRON Legacy background image
+[33m072db7c[m Feat: Sistema de audio completo (intro, motor y giros) y niveles de dificultad
+[33m83e25d7[m Add: Levels, Timer and Highscore logic
+[33m9621371[m Initial commit: Sistema Tron Grid Purge base structure

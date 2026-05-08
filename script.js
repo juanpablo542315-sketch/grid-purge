@@ -28,20 +28,16 @@ soundMotor.addEventListener('timeupdate', function() {
     }
 });
 
-// --- LÓGICA DE SONIDOS PARA BOTONES (CON EXCEPCIÓN) ---
+// --- LÓGICA DE SONIDOS PARA BOTONES ---
 function agregarSonidosBotones(boton, id) {
-    // Sonido de Pulso (Hover) - Siempre suena al pasar el cursor
     boton.addEventListener('mouseenter', () => {
         tronHoverSound.currentTime = 0;
         tronHoverSound.play().catch(e => {});
     });
 
-    // Sonido de Clic (Apertura de Disco) - Con tu excepción específica
     boton.addEventListener('mousedown', () => {
-        // NO suena si es el botón REINICIAR o si es el botón SIGUIENTE en el paso final (listo para jugar)
         const esUltimoPaso = (id === 'btn-next' && step >= 3);
         const esReiniciar = (id === 'btn-restart');
-
         if (!esUltimoPaso && !esReiniciar) {
             tronClickSound.currentTime = 0;
             tronClickSound.play().catch(e => {});
@@ -49,7 +45,6 @@ function agregarSonidosBotones(boton, id) {
     });
 }
 
-// Aplicamos a tus botones
 agregarSonidosBotones(btnNext, 'btn-next');
 agregarSonidosBotones(btnRestart, 'btn-restart');
 
@@ -60,7 +55,6 @@ const GRID_SIZE = 10;
 const WIDTH_UNITS = canvas.width / GRID_SIZE;
 const HEIGHT_UNITS = canvas.height / GRID_SIZE;
 
-// --- 2. CONFIGURACIÓN VISUAL ---
 const VANISHING_POINT_Y = canvas.height * 0.4;
 const HORIZON_COLOR = "#002030";
 const GRID_COLOR = "#00f2ff"; 
@@ -77,7 +71,6 @@ let puntajeMaximo = localStorage.getItem('tronMaxScore') || 0;
 let intervaloTiempo;
 let gameSpeed = 80;
 
-// --- ACTUALIZACIÓN DE LA INTERFAZ EXTERNA ---
 function updateUI() {
     document.getElementById('stat-nivel').innerText = nivel;
     document.getElementById('stat-tiempo').innerText = tiempoSobrevivido + "s";
@@ -87,7 +80,7 @@ function updateUI() {
 const messages = [
     "<p class='text-white'>SISTEMA: Conexión establecida... <br><br>Bienvenido, Usuario. Estás dentro de la red de combate.</p>",
     "<p class='text-cyan'>OBJETIVO: <br><br>Crea muros de luz para encerrar a GLU con tu motocileta stelar, el tratara de hacer lo mismo contigo. Por lo tanto NO toques ninguna estela o serás desintegrado.</p>",
-    "<p class='text-warning'>CONTROLES: <br><br>Usa las FLECHAS de tu teclado para girar a cualquier dirección. El ESPACIO reinicia el combate.</p>",
+    "<p class='text-warning'>CONTROLES: <br><br>Usa las FLECHAS de tu teclado o pantalla para girar. El ESPACIO o REINICIAR reinicia el combate.</p>",
     "<p class='text-success fw-bold'>¡LISTO! <br><br>Presiona el botón para entrar a la Red y comenzar la batalla.</p>"
 ];
 
@@ -114,9 +107,7 @@ function typeWriter(element, htmlText, speed = 30) {
 typeWriter(instrText, messages[0]);
 
 btnNext.addEventListener('click', () => {
-    if (soundIntro.paused) {
-        soundIntro.play().catch(() => {});
-    }
+    if (soundIntro.paused) soundIntro.play().catch(() => {});
     step++;
     if (step < messages.length) {
         typeWriter(instrText, messages[step]);
@@ -155,7 +146,6 @@ class Bike {
         }
         return false;
     }
-
     draw() {
         ctx.beginPath();
         ctx.strokeStyle = this.color;
@@ -177,7 +167,6 @@ class Bike {
 
         ctx.save(); 
         ctx.translate(cx, cy); 
-
         if (this.direction === 0) ctx.rotate(-Math.PI / 2);
         if (this.direction === 1) ctx.rotate(0);
         if (this.direction === 2) ctx.rotate(Math.PI / 2);
@@ -221,7 +210,6 @@ class Bike {
         ctx.shadowBlur = 0; 
         ctx.globalAlpha = 1.0;
     }
-
     kill() {
         if (this.alive) {
             this.alive = false;
@@ -246,10 +234,7 @@ function updateAdvancedIA() {
             let nx = iaBike.x, ny = iaBike.y;
             if (d === 0) ny--; if (d === 1) nx++; if (d === 2) ny++; if (d === 3) nx--;
             let dist = Math.abs(nx - playerBike.x) + Math.abs(ny - playerBike.y);
-            if (dist < minDist) {
-                minDist = dist;
-                bestDir = d;
-            }
+            if (dist < minDist) { minDist = dist; bestDir = d; }
         });
         if (Math.random() > 0.05) iaBike.direction = bestDir;
     }
@@ -281,8 +266,6 @@ function drawPerspectiveBackground() {
     }
     ctx.stroke();
     ctx.globalAlpha = 1;
-    
-    // Actualizamos las estadísticas externas en cada frame
     updateUI();
 }
 
@@ -294,10 +277,8 @@ function gameLoop() {
         playerBike.update();
         iaBike.update();
         if (playerBike.x === iaBike.x && playerBike.y === iaBike.y) {
-            playerBike.alive = false;
-            iaBike.alive = false;
-            endGame("IA"); 
-        } else {
+            playerBike.alive = false; iaBike.alive = false; endGame("IA"); 
+        } else { 
             let pDead = playerBike.checkDeath();
             let iDead = iaBike.checkDeath();
             if (pDead && iDead) endGame("IA");
@@ -323,61 +304,65 @@ function endGame(winner) {
     if (winner === "IA") {
         statusEl.innerText = "HAS SIDO VENCIDO POR GLU";
         statusEl.className = "text-danger fw-bold";
-        typeWriter(instrText, `<p class='text-danger'>FIN DE LA TRANSMISIÓN. <br><br>Sobreviviste ${tiempoSobrevivido} segundos. <br>Presiona  el boton de abajo o ESPACIO para reiniciar.</p>`);
+        typeWriter(instrText, `<p class='text-danger'>FIN DE LA TRANSMISIÓN. <br><br>Sobreviviste ${tiempoSobrevivido} segundos. <br>Presiona REINICIAR o ESPACIO.</p>`);
     } else {
         statusEl.innerText = "GLU ELIMINADO";
         statusEl.className = "text-success fw-bold";
-        typeWriter(instrText, `<p class='text-success'>¡VICTORIA! <br><br>Nivel ${nivel} superado. <br>Presiona ESPACIO para continuar y AVANZAR.</p>`);
+        typeWriter(instrText, `<p class='text-success'>¡VICTORIA! <br><br>Nivel ${nivel} superado. <br>Presiona REINICIAR para continuar.</p>`);
     }
 }
 
 function resetGame() {
-    soundIntro.pause();
-    soundIntro.currentTime = 0;
+    soundIntro.pause(); soundIntro.currentTime = 0;
     soundMotor.playbackRate = 1.0;
     soundMotor.play().catch(() => {});
-    if (!playerBike.alive) {
-        nivel = 1;
-        gameSpeed = 80;
-    } else if (gameRunning === false && iaBike.alive === false) {
+    if (!playerBike.alive) { nivel = 1; gameSpeed = 80; } 
+    else if (gameRunning === false && iaBike.alive === false) {
         if (nivel < 3) nivel++;
-        if (nivel === 2) gameSpeed = 50; 
-        if (nivel === 3) gameSpeed = 30; 
+        gameSpeed = (nivel === 2) ? 50 : (nivel === 3) ? 30 : 80;
     }
     gridData = Array.from({length: WIDTH_UNITS}, () => Array(HEIGHT_UNITS).fill(null));
     playerBike.reset(WIDTH_UNITS * 0.2, 25, 1);
     iaBike.reset(WIDTH_UNITS * 0.8, 25, 3);
     tiempoSobrevivido = 0;
     clearInterval(intervaloTiempo);
-    intervaloTiempo = setInterval(() => {
-        if (gameRunning) tiempoSobrevivido++;
-    }, 1000);
+    intervaloTiempo = setInterval(() => { if (gameRunning) tiempoSobrevivido++; }, 1000);
     statusEl.innerText = `ACTIVE - NIVEL ${nivel}`; 
     statusEl.className = "text-success fw-bold";
-    typeWriter(instrText, `<p class='text-cyan'>NIVEL ${nivel} EN CURSO... <br><br>La velocidad de la Red ha aumentado.</p>`);
+    typeWriter(instrText, `<p class='text-cyan'>NIVEL ${nivel} EN CURSO... <br><br>Sincronizando moto táctil.</p>`);
     gameRunning = true;
+}
+
+// --- CONTROLES UNIFICADOS (TECLADO Y TÁCTIL) ---
+function handleDirectionChange(key) {
+    if (!gameRunning) return;
+    soundGiro.currentTime = 0;
+    soundGiro.play().catch(() => {});
+    soundMotor.playbackRate = 0.75; 
+    setTimeout(() => { if (gameRunning) soundMotor.playbackRate = 1.0; }, 150);
+
+    if (key === "ArrowUp" && playerBike.direction !== 2) playerBike.direction = 0;
+    if (key === "ArrowRight" && playerBike.direction !== 3) playerBike.direction = 1;
+    if (key === "ArrowDown" && playerBike.direction !== 0) playerBike.direction = 2;
+    if (key === "ArrowLeft" && playerBike.direction !== 1) playerBike.direction = 3;
 }
 
 document.addEventListener('keydown', (e) => {
     if(["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) e.preventDefault();
     if (e.code === "Space" && (step >= 3 || !gameRunning)) resetGame();
-    
-    if (!gameRunning) return;
+    handleDirectionChange(e.key);
+});
 
-    if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
-        soundGiro.currentTime = 0;
-        soundGiro.play().catch(() => {});
-        soundMotor.currentTime = 0;
-        soundMotor.playbackRate = 0.75; 
-        setTimeout(() => {
-            if (gameRunning) soundMotor.playbackRate = 1.0;
-        }, 150);
+// --- LISTENER DE CONTROLES TÁCTILES ---
+const touchMap = { 't-up': 'ArrowUp', 't-down': 'ArrowDown', 't-left': 'ArrowLeft', 't-right': 'ArrowRight' };
+Object.keys(touchMap).forEach(id => {
+    const btn = document.getElementById(id);
+    if (btn) {
+        btn.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            handleDirectionChange(touchMap[id]);
+        }, { passive: false });
     }
-
-    if (e.key === "ArrowUp" && playerBike.direction !== 2) playerBike.direction = 0;
-    if (e.key === "ArrowRight" && playerBike.direction !== 3) playerBike.direction = 1;
-    if (e.key === "ArrowDown" && playerBike.direction !== 0) playerBike.direction = 2;
-    if (e.key === "ArrowLeft" && playerBike.direction !== 1) playerBike.direction = 3;
 });
 
 gameLoop();

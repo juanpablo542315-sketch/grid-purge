@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-select=none">
     <title>SISTEMA TRON: GRID PURGE</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap" rel="stylesheet">
     <link rel="shortcut icon" href="assets/favicon.ico" type="image/x-icon">
@@ -11,10 +11,17 @@
 </head>
 <body class="bg-dark text-white d-flex flex-column min-vh-100">
 
+    <div id="orientation-overlay">
+        <div class="text-center">
+            <div class="rotate-icon">🔄</div>
+            <p class="tron-title-style mt-3">GIRA TU DISPOSITIVO PARA ENTRAR EN LA RED</p>
+        </div>
+    </div>
+
     <nav class="navbar navbar-dark bg-black border-bottom border-primary shadow-lg">
         <div class="container-fluid px-4">
             <span class="navbar-brand h1 fw-bold text-cyan tron-title-style">TRON LEGACY : EL GRAN RETO</span>
-            <span class="text-secondary">Programador: Juan Pablo Hernandez Martinez | <b class="text-cyan tron-title-style">USUARIO</b> vs <b class="text-warning tron-title-style">PROGRAMA</b></span>
+            <span class="text-secondary d-none d-md-inline">Programador: Juan Pablo Hernandez Martinez | <b class="text-cyan tron-title-style">USUARIO</b> vs <b class="text-warning tron-title-style">PROGRAMA</b></span>
         </div>
     </nav>
 
@@ -48,15 +55,22 @@
                 </div>
             </div>
 
-            <div class="col-lg-8 text-center">
-                <div id="game-container" class="border border-info rounded overflow-hidden shadow-neon position-relative">
-                    <video autoplay muted loop id="bg-video">
-                        <source src="https://assets.mixkit.co/videos/preview/mixkit-grid-of-blue-lights-in-the-dark-31231-large.mp4" type="video/mp4">
-                    </video>
-                    <canvas id="gameCanvas"></canvas>
-                </div>
+           <div class="col-lg-8 text-center position-relative">
+    <div id="game-container" class="border border-info rounded overflow-hidden shadow-neon position-relative">
+        <video autoplay muted loop id="bg-video">
+            <source src="https://assets.mixkit.co/videos/preview/mixkit-grid-of-blue-lights-in-the-dark-31231-large.mp4" type="video/mp4">
+        </video>
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="mobile-dpad">
+            <button class="btn-grid-touch" id="t-up">▲</button>
+            <div class="d-flex gap-2">
+                <button class="btn-grid-touch" id="t-left">◀</button>
+                <button class="btn-grid-touch" id="t-down">▼</button> <button class="btn-grid-touch" id="t-right">▶</button>
             </div>
         </div>
+    </div>
+</div>
     </main>
 
     <footer class="bg-black text-center py-2 border-top border-primary mt-auto">
