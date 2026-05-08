@@ -157,74 +157,121 @@ html, body {
     }
 }
 /* =========================================================
-   ESTILO DE BOTONES CRISTAL (BLANQUISCOS)
+   PROTOCOLO CELULAR MODO CONSOLA PORTÁTIL (ANTI-SCROLL)
    ========================================================= */
-.btn-grid-touch {
-    width: 65px;
-    height: 65px;
-    background: rgba(255, 255, 255, 0.1) !important; /* Transparencia blanca */
-    border: 2px solid rgba(255, 255, 255, 0.3) !important;
-    color: rgba(255, 255, 255, 0.8) !important;
-    border-radius: 15px;
-    font-size: 24px;
-    backdrop-filter: blur(8px); /* Efecto cristal */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-    pointer-events: auto;
-}
 
-.btn-grid-touch:active {
-    background: rgba(255, 255, 255, 0.3) !important;
-    transform: scale(0.9);
-}
-
-/* =========================================================
-   PROTOCOLO CELULAR (SOLO HORIZONTAL)
-   ========================================================= */
 @media (max-width: 992px) and (orientation: landscape) {
-    /* Mantenemos visibilidad, solo ajustamos escalas */
-    nav, footer { scale: 0.8; }
-    
-    .row {
-        display: flex !important;
-        flex-direction: row !important;
+    /* Bloqueamos el scroll del body por completo */
+    body {
+        height: 100vh !important;
+        overflow: hidden !important;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Reducimos la altura de los elementos fijos */
+    nav.navbar {
+        height: 8vh !important; /* El nav ocupa solo el 8% de la altura */
+        padding: 0 10px !important;
+        display: flex;
         align-items: center;
     }
+    nav.navbar span { font-size: 0.8rem !important; }
 
-    .col-lg-4 { width: 35% !important; scale: 0.9; }
-    .col-lg-8 { width: 65% !important; }
+    footer {
+        height: 5vh !important; /* El footer ocupa el 5% */
+        padding: 0 !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    footer p { font-size: 0.6rem !important; margin: 0 !important; }
 
-    #game-container {
-        height: 85vh !important;
-        border-width: 2px;
+    /* Contenedor principal: Ajuste dinámico (100% - Nav - Footer) */
+    main.container-fluid {
+        flex: 1;
+        height: 87vh !important;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 5px !important;
+        margin: 0 !important;
     }
 
-    /* Posicionamos los botones dentro de la pantalla de juego */
+    /* Convertimos la row de Bootstrap en un flex-container */
+    .row {
+        width: 100%;
+        height: 100%;
+        display: flex !important;
+        flex-direction: row !important;
+        margin: 0 !important;
+        gap: 5px;
+    }
+
+    /* Panel de Datos y Stats (Izquierda) */
+    .col-lg-4 {
+        width: 30% !important; /* Más angosto */
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 !important;
+    }
+    
+    .card.bg-black {
+        width: 100%;
+        height: 100%; /* La carta ocupa toda la altura disponible */
+        scale: 0.85; /* Encojemos todo el panel de stats */
+        transform-origin: left center;
+        margin: 0 !important;
+    }
+
+    /* Panel del Juego y Canvas (Derecha) */
+    .col-lg-8 {
+        width: 70% !important;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        padding: 0 !important;
+    }
+
+    /* Ajustamos el Canvas para que NO obligue al scroll */
+    #game-container {
+        width: 100% !important;
+        height: 80vh !important; /* Altura máxima permitida */
+        max-height: 80vh !important;
+        border-width: 2px;
+        margin: 0 !important;
+    }
+
+    #gameCanvas {
+        width: 100% !important;
+        height: 100% !important;
+        object-fit: contain; /* Asegura que el canvas se encaje perfectamente */
+    }
+
+    /* =====================================================
+       CONTROLES TÁCTILES UNIFICADOS (TRANSPARENTES)
+       ===================================================== */
     #mobile-dpad {
         display: flex !important;
         flex-direction: column;
         align-items: center;
         position: absolute;
-        bottom: 15px;
-        left: 15px; /* Lado izquierdo para el pulgar */
-        z-index: 10;
-        gap: 8px;
+        bottom: 10px;
+        left: 10px; /* Lado izquierdo para el pulgar */
+        z-index: 100;
+        gap: 5px;
     }
-}
 
-/* Aviso de rotación */
-#orientation-overlay {
-    display: none;
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0, 0, 0, 0.9);
-    z-index: 10000;
-    align-items: center;
-    justify-content: center;
-}
-
-@media (max-width: 992px) and (orientation: portrait) {
-    #orientation-overlay { display: flex; }
+    /* Botones Neón Cyan Transparentes */
+    .btn-grid-touch {
+        width: 50px; /* Más compactos */
+        height: 50px;
+        border-radius: 12px;
+        background: rgba(0, 242, 255, 0.1) !important;
+        border: 2px solid rgba(0, 242, 255, 0.4) !important;
+        color: #00f2ff !important;
+        backdrop-filter: blur(5px);
+        font-size: 20px;
+    }
 }

@@ -55,19 +55,20 @@
                 </div>
             </div>
 
-           <div class="col-lg-8 text-center position-relative">
+              <div class="col-lg-8 text-center position-relative">
     <div id="game-container" class="border border-info rounded overflow-hidden shadow-neon position-relative">
         <video autoplay muted loop id="bg-video">
             <source src="https://assets.mixkit.co/videos/preview/mixkit-grid-of-blue-lights-in-the-dark-31231-large.mp4" type="video/mp4">
         </video>
         <canvas id="gameCanvas"></canvas>
 
-        <div id="mobile-dpad">
+        <div id="mobile-dpad" class="d-none">
             <button class="btn-grid-touch" id="t-up">▲</button>
-            <div class="d-flex gap-2">
+            <div class="d-flex">
                 <button class="btn-grid-touch" id="t-left">◀</button>
-                <button class="btn-grid-touch" id="t-down">▼</button> <button class="btn-grid-touch" id="t-right">▶</button>
+                <button class="btn-grid-touch" id="t-right">▶</button>
             </div>
+            <button class="btn-grid-touch" id="t-down">▼</button>
         </div>
     </div>
 </div>
