@@ -46,7 +46,7 @@ body {
 /* Contenedor del Video y Canvas */
 #game-container {
     background-color: #000;
-    height: 500px; 
+    height: 500px; /* Se ajustará en móvil por media query */
     width: 100%;
     max-width: 800px;
     margin: 0 auto;
@@ -102,18 +102,18 @@ html, body {
 }
 
 /* =========================================================
-   OVERLAY DE ORIENTACIÓN (Manda en vertical)
+   CONTROLES MÓVILES & ORIENTACIÓN
    ========================================================= */
+
 #orientation-overlay {
-    display: none; /* Oculto por defecto */
+    display: none;
     position: fixed;
     top: 0; left: 0; width: 100%; height: 100%;
     background: #000;
-    z-index: 99999; /* Máxima prioridad para bloquear clics */
+    z-index: 9999;
     justify-content: center;
     align-items: center;
     color: var(--neon-blue);
-    text-align: center;
 }
 
 .rotate-icon { font-size: 50px; animation: rotate 2s infinite; }
@@ -131,42 +131,19 @@ html, body {
     touch-action: manipulation;
 }
 
-/* =========================================================
-   PANTALLA VERTICAL: BLOQUEO TOTAL
-   ========================================================= */
-@media (max-width: 992px) and (orientation: portrait) {
-    #orientation-overlay { 
-        display: flex !important; /* Bloquea la pantalla */
-    }
-    body { overflow: hidden; }
-}
-
-/* =========================================================
-   PROTOCOLO HORIZONTAL: CERO SCROLL Y UNIFICACIÓN
-   ========================================================= */
+/* PROTOCOLO HORIZONTAL: TODO EN UNA PANTALLA */
 @media (max-width: 992px) and (orientation: landscape) {
-    #orientation-overlay { display: none !important; }
-
-    /* 1. Liberamos un poco el bloqueo para que no se trabe */
     body, html {
-        overflow-x: hidden !important;
-        overflow-y: hidden !important; /* Mantenemos el no-scroll */
-        height: 100% !important;
+        overflow: hidden !important; /* Cero Scroll */
+        height: 100vh !important;
     }
 
-    /* 2. Nav y Footer casi invisibles para dar espacio al contenido */
-    nav.navbar { 
-        height: 8vh !important; 
-        min-height: 30px !important;
-        padding: 0 10px !important; 
-    }
-    footer { height: 4vh !important; }
+    nav.navbar { height: 12vh !important; padding: 0 10px !important; }
+    footer { height: 6vh !important; display: flex; align-items: center; }
 
-    /* 3. Contenedor principal sin márgenes estorbosos */
     main.container-fluid {
-        height: 88vh !important;
-        padding: 2px !important;
-        margin: 0 !important;
+        height: 82vh !important;
+        padding: 5px !important;
         display: flex;
         align-items: center;
     }
@@ -177,77 +154,68 @@ html, body {
         width: 100%;
         height: 100%;
         margin: 0 !important;
-        align-items: stretch; /* Estira stats y juego para que usen el alto total */
     }
 
-    /* 4. PANEL DE STATS (Izquierda) - El culpable de empujar el botón */
+    /* Stats Panel (Izquierda) */
     .col-lg-4 {
-        width: 30% !important;
-        height: 100% !important;
-        padding: 2px !important;
-        display: flex;
-        flex-direction: column;
+        width: 35% !important;
+        height: 100%;
+        padding: 0 !important;
     }
 
     .card.bg-black {
         height: 100% !important;
-        margin: 0 !important;
-        scale: 0.8; /* Lo achicamos un poco más */
-        transform-origin: top left;
-        display: flex;
-        flex-direction: column;
+        scale: 0.85;
+        transform-origin: left center;
+        border-width: 1px !important;
     }
 
-    .card-body {
-        padding: 5px !important;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between; /* Empuja el botón de "Siguiente" hacia arriba */
-    }
-
-    /* Achicamos el texto de instrucciones para que no ocupe tanto espacio */
-    #instruction-text { 
-        font-size: 0.65rem !important; 
-        line-height: 1.1 !important;
-        margin: 2px 0 !important;
-        max-height: 60px;
-        overflow-y: auto;
-    }
-
-    .tron-title-style { font-size: 0.7rem !important; }
-
-    /* 5. PANEL DEL JUEGO (Derecha) */
+    /* Área de Juego (Derecha) */
     .col-lg-8 {
-        width: 70% !important;
-        height: 100% !important;
-        padding: 2px !important;
+        width: 65% !important;
+        height: 100%;
+        padding: 0 !important;
         position: relative;
     }
 
     #game-container {
-        height: 95% !important; /* Que no use el 100% para no salirse */
-        width: 100% !important;
-        margin: 0 !important;
+        height: 100% !important; /* Ocupa todo el alto disponible */
+        width: 95% !important;
+        max-width: none !important;
+        border-radius: 10px;
     }
 
     #gameCanvas {
-        width: 100% !important;
         height: 100% !important;
+        width: 100% !important;
         object-fit: contain;
     }
 
-    /* 6. CONTROLES - Esquina derecha inferior */
+    /* CONTROLES EN LA ESQUINA DERECHA INFERIOR (ZONA VERDE) */
     #mobile-dpad {
         position: absolute;
-        bottom: 5px;
-        right: 10px;
+        bottom: 10px;
+        right: 15px;
         z-index: 1000;
-        gap: 2px;
+        margin: 0 !important;
+        display: flex !important;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
     }
 
     .btn-grid-touch {
-        width: 40px !important; /* Más pequeños para no estorbar */
-        height: 40px !important;
-        font-size: 16px !important;
+        width: 44px !important;
+        height: 44px !important;
+        font-size: 18px !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.15) !important; /* Cristal blanquizco */
+        border: 1px solid rgba(255, 255, 255, 0.4) !important;
+        backdrop-filter: blur(4px);
     }
+}
+
+/* Pantalla Vertical */
+@media (max-width: 992px) and (orientation: portrait) {
+    #orientation-overlay { display: flex; }
 }
